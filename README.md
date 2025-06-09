@@ -15,6 +15,7 @@ Recipe Radar is a simple recipe search application built with React, Vite, and T
 - **Vite**: Build tool
 - **TypeScript**: Type safety
 - **React Router**: Navigation
+- **TanStack Query** (React Query): Data fetching and cache management
 - **Tailwind CSS**: Styling
 - **tailwind-variants**: Component styling utility
 
@@ -46,9 +47,11 @@ npm run dev
 - **/src**
   - **/components**: Reusable UI components
   - **/data**: Mock data for recipes
-  - **/hooks**: Custom React hooks
+  - **/hooks**: Custom React hooks with React Query
   - **/layouts**: Layout components
   - **/pages**: Top-level page components
+  - **/providers**: Context providers (e.g., QueryProvider)
+  - **/services**: API and data services
   - **/types**: TypeScript type definitions
 
 ## Building for Production

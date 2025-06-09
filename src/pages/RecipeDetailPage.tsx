@@ -23,7 +23,7 @@ export function RecipeDetailPage() {
 
   if (error || !recipe) {
     return (
-      <div className="container py-12">
+      <div className="py-4">
         <div className="rounded-lg bg-red-50 p-6 text-center">
           <h1 className="text-2xl font-bold text-red-800">Recipe Not Found</h1>
           <p className="mt-2 text-red-700">The recipe you're looking for doesn't exist or has been removed.</p>
@@ -52,7 +52,7 @@ export function RecipeDetailPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         </div>
         
-        <div className="relative container py-24 text-white">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-white">
           <Button
             variant="outline"
             className="mb-6 border-white text-white hover:bg-white/20"
@@ -74,7 +74,7 @@ export function RecipeDetailPage() {
       </div>
       
       {/* Recipe details */}
-      <div className="container py-12">
+      <div className="py-12">
         <div className="grid gap-8 md:grid-cols-3">
           {/* Left sidebar with preparation info */}
           <div className="rounded-lg bg-gray-50 p-6">

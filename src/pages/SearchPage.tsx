@@ -21,7 +21,7 @@ export function SearchPage() {
   }, [query]);
 
   return (
-    <div className="container py-8">
+    <div className="py-4">
       <form onSubmit={handleSearch} className="mb-8 flex gap-4">
         <SearchInput
           value={searchQuery}

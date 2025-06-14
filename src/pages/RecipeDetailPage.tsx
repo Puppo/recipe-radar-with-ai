@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tv } from 'tailwind-variants';
 import { Button } from '../components/Button';
@@ -6,6 +6,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { TranslationStatusNotification } from '../components/TranslationStatusNotification';
 import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
 import { useRecipeById } from '../hooks/useRecipes';
+import { useRecipeTranslation } from '../hooks/useRecipeTranslation';
 import { useTranslationStatus } from '../hooks/useTranslationStatus';
 
 const recipeDetailPage = tv({
@@ -134,6 +135,15 @@ export function RecipeDetailPage() {
     isTranslatorReady
   } = useTranslationStatus();
 
+  // Recipe translation management
+  const {
+    isTranslating,
+    translationError,
+    translateRecipe,
+    getDisplayContent,
+    hasTranslationFor
+  } = useRecipeTranslation();
+
   // Navigate back function
   const goBack = () => navigate(-1);
   
@@ -145,9 +155,24 @@ export function RecipeDetailPage() {
     if (language !== 'en' && !isTranslatorReady(language)) {
       await initializeTranslator(language);
     }
+
+    // Translate recipe if we have one and translator is ready
+    if (recipe && (language === 'en' || isTranslatorReady(language))) {
+      await translateRecipe(recipe, language);
+    }
     
     console.log(`Translating recipe to: ${language}`);
   };
+
+  // Initialize translation when recipe loads or translator becomes ready
+  useEffect(() => {
+    if (recipe && selectedLanguage !== 'en' && isTranslatorReady(selectedLanguage)) {
+      translateRecipe(recipe, selectedLanguage);
+    }
+  }, [recipe, selectedLanguage, isTranslatorReady, translateRecipe]);
+
+  // Get the content to display based on selected language
+  const displayContent = getDisplayContent(selectedLanguage);
 
   if (isLoading) {
     return (
@@ -216,23 +241,46 @@ export function RecipeDetailPage() {
               onInitializeTranslator={initializeTranslator}
             />
           </div>
-          <h1 className={heroTitle()}>{recipe.name}</h1>
-          <p className={heroDescription()}>{recipe.description}</p>
+          <h1 className={heroTitle()}>{displayContent?.name ?? recipe.name}</h1>
+          <p className={heroDescription()}>{displayContent?.description ?? recipe.description}</p>
           
           {/* Translation Status */}
           {selectedLanguage !== 'en' && (
             <div className="mt-4 flex items-center gap-2">
-              <div className="flex items-center gap-2 rounded-full bg-blue-600/70 px-3 py-1 text-sm">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                </svg>
-                <span>Translated to {selectedLanguage.toUpperCase()}</span>
-              </div>
+              {isTranslating ? (
+                <div className="flex items-center gap-2 rounded-full bg-yellow-600/70 px-3 py-1 text-sm">
+                  <svg className="h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Translating...</span>
+                </div>
+              ) : translationError ? (
+                <div className="flex items-center gap-2 rounded-full bg-red-600/70 px-3 py-1 text-sm">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <span>Translation failed</span>
+                </div>
+              ) : hasTranslationFor(selectedLanguage) ? (
+                <div className="flex items-center gap-2 rounded-full bg-green-600/70 px-3 py-1 text-sm">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Translated to {selectedLanguage.toUpperCase()}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 rounded-full bg-blue-600/70 px-3 py-1 text-sm">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                  </svg>
+                  <span>Ready to translate</span>
+                </div>
+              )}
             </div>
           )}
           
           <div className={tagsContainer()}>
-            {recipe.tags.map((tagName) => (
+            {(displayContent?.tags ?? recipe.tags).map((tagName) => (
               <span key={tagName} className={tag()}>
                 {tagName}
               </span>
@@ -278,7 +326,7 @@ export function RecipeDetailPage() {
             <section>
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Ingredients</h2>
-                {selectedLanguage !== 'en' && (
+                {selectedLanguage !== 'en' && hasTranslationFor(selectedLanguage) && (
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -288,8 +336,8 @@ export function RecipeDetailPage() {
                 )}
               </div>
               <ul className="mt-4 space-y-2">
-                {recipe.ingredients.map((ingredient) => (
-                  <li key={`ingredient-${ingredient}`} className="flex items-start">
+                {(displayContent?.ingredients ?? recipe.ingredients).map((ingredient, index) => (
+                  <li key={`ingredient-${index}-${ingredient.substring(0, 20)}`} className="flex items-start">
                     <span className="mr-2 mt-1 flex h-2 w-2 rounded-full bg-blue-600"></span>
                     <span>{ingredient}</span>
                   </li>
@@ -301,7 +349,7 @@ export function RecipeDetailPage() {
             <section>
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Instructions</h2>
-                {selectedLanguage !== 'en' && (
+                {selectedLanguage !== 'en' && hasTranslationFor(selectedLanguage) && (
                   <span className="text-sm text-gray-500 flex items-center gap-1">
                     <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -311,8 +359,8 @@ export function RecipeDetailPage() {
                 )}
               </div>
               <ol className={instructionsList()}>
-                {recipe.instructions.map((instruction, index) => (
-                  <li key={`instruction-${instruction.substring(0, 20)}`} className={instructionItem()}>
+                {(displayContent?.instructions ?? recipe.instructions).map((instruction, index) => (
+                  <li key={`instruction-${index}-${instruction.substring(0, 20)}`} className={instructionItem()}>
                     <span className={instructionNumber()}>
                       {index + 1}
                     </span>

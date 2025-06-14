@@ -1,11 +1,200 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { tv } from 'tailwind-variants';
 import { Button } from '../components/Button';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { TranslationStatusNotification } from '../components/TranslationStatusNotification';
 import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
 import { useRecipeById } from '../hooks/useRecipes';
 import { useTranslationStatus } from '../hooks/useTranslationStatus';
+
+const loadingContainer = tv({
+  base: 'grid place-items-center py-24'
+});
+
+const loadingContent = tv({
+  base: 'text-center'
+});
+
+const loadingSpinner = tv({
+  base: 'h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-600'
+});
+
+const loadingText = tv({
+  base: 'mt-4 text-xl text-gray-600'
+});
+
+const errorContainer = tv({
+  base: 'py-4'
+});
+
+const errorContent = tv({
+  base: 'rounded-lg bg-red-50 p-6 text-center'
+});
+
+const errorTitle = tv({
+  base: 'text-2xl font-bold text-red-800'
+});
+
+const errorText = tv({
+  base: 'mt-2 text-red-700'
+});
+
+const errorButton = tv({
+  base: 'mt-6'
+});
+
+const pageContainer = tv({
+  base: ''
+});
+
+const heroSection = tv({
+  base: 'relative'
+});
+
+const heroBackground = tv({
+  base: 'absolute inset-0'
+});
+
+const heroImage = tv({
+  base: 'h-full w-full object-cover'
+});
+
+const heroOverlay = tv({
+  base: 'absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent'
+});
+
+const heroContent = tv({
+  base: 'relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-white'
+});
+
+const heroControls = tv({
+  base: 'flex items-center justify-between mb-6'
+});
+
+const backButton = tv({
+  base: 'border-white text-white hover:bg-white/20'
+});
+
+const heroTitle = tv({
+  base: 'text-4xl font-bold sm:text-5xl'
+});
+
+const heroDescription = tv({
+  base: 'mt-4 max-w-2xl text-xl text-white/90'
+});
+
+const translationBadge = tv({
+  base: 'mt-4 flex items-center gap-2'
+});
+
+const translationStatus = tv({
+  base: 'flex items-center gap-2 rounded-full bg-blue-600/70 px-3 py-1 text-sm'
+});
+
+const translationIcon = tv({
+  base: 'h-4 w-4'
+});
+
+const tagsContainer = tv({
+  base: 'mt-8 flex flex-wrap gap-2'
+});
+
+const tag = tv({
+  base: 'rounded-full bg-blue-600/70 px-3 py-1 text-sm'
+});
+
+const recipeDetails = tv({
+  base: 'py-12'
+});
+
+const statusPanelContainer = tv({
+  base: 'mb-8'
+});
+
+const contentGrid = tv({
+  base: 'grid gap-8 md:grid-cols-3'
+});
+
+const sidebar = tv({
+  base: 'rounded-lg bg-gray-50 p-6'
+});
+
+const sidebarTitle = tv({
+  base: 'text-lg font-semibold'
+});
+
+const sidebarList = tv({
+  base: 'mt-4 space-y-4'
+});
+
+const sidebarItem = tv({
+  base: ''
+});
+
+const sidebarLabel = tv({
+  base: 'text-sm text-gray-500'
+});
+
+const sidebarValue = tv({
+  base: 'font-medium'
+});
+
+const mainContent = tv({
+  base: 'md:col-span-2 space-y-8'
+});
+
+const section = tv({
+  base: ''
+});
+
+const sectionHeader = tv({
+  base: 'flex items-center justify-between'
+});
+
+const sectionTitle = tv({
+  base: 'text-2xl font-bold'
+});
+
+const translatedLabel = tv({
+  base: 'text-sm text-gray-500 flex items-center gap-1'
+});
+
+const translatedIcon = tv({
+  base: 'h-3 w-3'
+});
+
+const ingredientsList = tv({
+  base: 'mt-4 space-y-2'
+});
+
+const ingredientItem = tv({
+  base: 'flex items-start'
+});
+
+const ingredientBullet = tv({
+  base: 'mr-2 mt-1 flex h-2 w-2 rounded-full bg-blue-600'
+});
+
+const ingredientText = tv({
+  base: ''
+});
+
+const instructionsList = tv({
+  base: 'mt-4 space-y-6'
+});
+
+const instructionItem = tv({
+  base: 'flex'
+});
+
+const instructionNumber = tv({
+  base: 'mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-800'
+});
+
+const instructionText = tv({
+  base: 'pt-1'
+});
 
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -40,10 +229,10 @@ export function RecipeDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="grid place-items-center py-24">
-        <div className="text-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-600"></div>
-          <p className="mt-4 text-xl text-gray-600">Loading recipe...</p>
+      <div className={loadingContainer()}>
+        <div className={loadingContent()}>
+          <div className={loadingSpinner()}></div>
+          <p className={loadingText()}>Loading recipe...</p>
         </div>
       </div>
     );
@@ -51,13 +240,13 @@ export function RecipeDetailPage() {
 
   if (error || !recipe) {
     return (
-      <div className="py-4">
-        <div className="rounded-lg bg-red-50 p-6 text-center">
-          <h1 className="text-2xl font-bold text-red-800">Recipe Not Found</h1>
-          <p className="mt-2 text-red-700">The recipe you're looking for doesn't exist or has been removed.</p>
+      <div className={errorContainer()}>
+        <div className={errorContent()}>
+          <h1 className={errorTitle()}>Recipe Not Found</h1>
+          <p className={errorText()}>The recipe you're looking for doesn't exist or has been removed.</p>
           <Button
             variant="primary"
-            className="mt-6"
+            className={errorButton()}
             onClick={goBack}
           >
             Go Back
@@ -68,7 +257,7 @@ export function RecipeDetailPage() {
   }
 
   return (
-    <div>
+    <div className={pageContainer()}>
       {/* Translation Status Notifications */}
       <TranslationStatusNotification
         translations={translations}
@@ -77,21 +266,21 @@ export function RecipeDetailPage() {
       />
       
       {/* Hero section */}
-      <div className="relative">
-        <div className="absolute inset-0">
+      <div className={heroSection()}>
+        <div className={heroBackground()}>
           <img
             src={recipe.imageUrl}
             alt={recipe.name}
-            className="h-full w-full object-cover"
+            className={heroImage()}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          <div className={heroOverlay()}></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-white">
-          <div className="flex items-center justify-between mb-6">
+        <div className={heroContent()}>
+          <div className={heroControls()}>
             <Button
               variant="outline"
-              className="border-white text-white hover:bg-white/20"
+              className={backButton()}
               onClick={goBack}
             >
               ← Back
@@ -105,8 +294,8 @@ export function RecipeDetailPage() {
               onInitializeTranslator={initializeTranslator}
             />
           </div>
-          <h1 className="text-4xl font-bold sm:text-5xl">{recipe.name}</h1>
-          <p className="mt-4 max-w-2xl text-xl text-white/90">{recipe.description}</p>
+          <h1 className={heroTitle()}>{recipe.name}</h1>
+          <p className={heroDescription()}>{recipe.description}</p>
           
           {/* Translation Status */}
           {selectedLanguage !== 'en' && (
@@ -120,10 +309,10 @@ export function RecipeDetailPage() {
             </div>
           )}
           
-          <div className="mt-8 flex flex-wrap gap-2">
-            {recipe.tags.map((tag) => (
-              <span key={tag} className="rounded-full bg-blue-600/70 px-3 py-1 text-sm">
-                {tag}
+          <div className={tagsContainer()}>
+            {recipe.tags.map((tagName) => (
+              <span key={tagName} className={tag()}>
+                {tagName}
               </span>
             ))}
           </div>
@@ -131,9 +320,9 @@ export function RecipeDetailPage() {
       </div>
       
       {/* Recipe details */}
-      <div className="py-12">
+      <div className={recipeDetails()}>
         {/* Translation Status Panel */}
-        <div className="mb-8">
+        <div className={statusPanelContainer()}>
           <TranslationStatusPanel
             translations={translations}
             onRetry={retryTranslator}
@@ -141,22 +330,22 @@ export function RecipeDetailPage() {
           />
         </div>
         
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className={contentGrid()}>
           {/* Left sidebar with preparation info */}
-          <div className="rounded-lg bg-gray-50 p-6">
-            <h2 className="text-lg font-semibold">Preparation</h2>
-            <dl className="mt-4 space-y-4">
-              <div>
-                <dt className="text-sm text-gray-500">Prep Time</dt>
-                <dd className="font-medium">{recipe.prepTime}</dd>
+          <div className={sidebar()}>
+            <h2 className={sidebarTitle()}>Preparation</h2>
+            <dl className={sidebarList()}>
+              <div className={sidebarItem()}>
+                <dt className={sidebarLabel()}>Prep Time</dt>
+                <dd className={sidebarValue()}>{recipe.prepTime}</dd>
               </div>
-              <div>
-                <dt className="text-sm text-gray-500">Cook Time</dt>
-                <dd className="font-medium">{recipe.cookTime}</dd>
+              <div className={sidebarItem()}>
+                <dt className={sidebarLabel()}>Cook Time</dt>
+                <dd className={sidebarValue()}>{recipe.cookTime}</dd>
               </div>
-              <div>
-                <dt className="text-sm text-gray-500">Servings</dt>
-                <dd className="font-medium">{recipe.servings}</dd>
+              <div className={sidebarItem()}>
+                <dt className={sidebarLabel()}>Servings</dt>
+                <dd className={sidebarValue()}>{recipe.servings}</dd>
               </div>
             </dl>
           </div>
@@ -199,13 +388,13 @@ export function RecipeDetailPage() {
                   </span>
                 )}
               </div>
-              <ol className="mt-4 space-y-6">
+              <ol className={instructionsList()}>
                 {recipe.instructions.map((instruction, index) => (
-                  <li key={`instruction-${instruction.substring(0, 20)}`} className="flex">
-                    <span className="mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-800">
+                  <li key={`instruction-${instruction.substring(0, 20)}`} className={instructionItem()}>
+                    <span className={instructionNumber()}>
                       {index + 1}
                     </span>
-                    <span className="pt-1">{instruction}</span>
+                    <span className={instructionText()}>{instruction}</span>
                   </li>
                 ))}
               </ol>

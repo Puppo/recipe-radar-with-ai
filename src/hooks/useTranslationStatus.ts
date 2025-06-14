@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { TranslationStatus } from '../components/TranslationStatusNotification';
 import { languages } from '../constants/languages';
 import translatorService from '../services/ai/translatorService';
@@ -157,20 +157,6 @@ export function useTranslationStatus(): UseTranslationStatusReturn {
     if (progress >= 25) return '1m';
     return '2m';
   };
-
-  // Initialize translators on mount if available
-  useEffect(() => {
-    const translatorWindow = window as TranslatorWindow;
-    if (translatorWindow.Translator) {
-      // Auto-initialize commonly used languages
-      const autoInitLanguages = ['es', 'fr', 'de']; // Spanish, French, German
-      autoInitLanguages.forEach(langCode => {
-        if (!translatorService.languageMap[langCode]) {
-          setTimeout(() => initializeTranslator(langCode), Math.random() * 2000);
-        }
-      });
-    }
-  }, [initializeTranslator]);
 
   return {
     translations,

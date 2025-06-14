@@ -2,21 +2,39 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { LanguageSelector } from '../components/LanguageSelector';
+import { TranslationStatusNotification } from '../components/TranslationStatusNotification';
+import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
 import { useRecipeById } from '../hooks/useRecipes';
+import { useTranslationStatus } from '../hooks/useTranslationStatus';
 
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { recipe, isLoading, error } = useRecipeById(id);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
+  
+  // Translation status management
+  const {
+    translations,
+    initializeTranslator,
+    retryTranslator,
+    dismissNotification,
+    clearAllNotifications,
+    isTranslatorReady
+  } = useTranslationStatus();
 
   // Navigate back function
   const goBack = () => navigate(-1);
   
   // Handle language change
-  const handleLanguageChange = (language: string) => {
+  const handleLanguageChange = async (language: string) => {
     setSelectedLanguage(language);
-    // TODO: Here you would typically trigger the translation API call
+    
+    // Initialize translator if not ready
+    if (language !== 'en' && !isTranslatorReady(language)) {
+      await initializeTranslator(language);
+    }
+    
     console.log(`Translating recipe to: ${language}`);
   };
 
@@ -51,6 +69,13 @@ export function RecipeDetailPage() {
 
   return (
     <div>
+      {/* Translation Status Notifications */}
+      <TranslationStatusNotification
+        translations={translations}
+        onDismiss={dismissNotification}
+        onRetry={retryTranslator}
+      />
+      
       {/* Hero section */}
       <div className="relative">
         <div className="absolute inset-0">
@@ -76,6 +101,8 @@ export function RecipeDetailPage() {
               selectedLanguage={selectedLanguage}
               onLanguageChange={handleLanguageChange}
               variant="dark"
+              isTranslatorReady={isTranslatorReady}
+              onInitializeTranslator={initializeTranslator}
             />
           </div>
           <h1 className="text-4xl font-bold sm:text-5xl">{recipe.name}</h1>
@@ -105,6 +132,15 @@ export function RecipeDetailPage() {
       
       {/* Recipe details */}
       <div className="py-12">
+        {/* Translation Status Panel */}
+        <div className="mb-8">
+          <TranslationStatusPanel
+            translations={translations}
+            onRetry={retryTranslator}
+            onClearAll={clearAllNotifications}
+          />
+        </div>
+        
         <div className="grid gap-8 md:grid-cols-3">
           {/* Left sidebar with preparation info */}
           <div className="rounded-lg bg-gray-50 p-6">

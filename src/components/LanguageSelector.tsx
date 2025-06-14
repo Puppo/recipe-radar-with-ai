@@ -6,20 +6,49 @@ interface LanguageSelectorProps {
   readonly selectedLanguage: string;
   readonly onLanguageChange: (language: string) => void;
   readonly variant?: 'light' | 'dark';
+  readonly isTranslatorReady?: (languageCode: string) => boolean;
+  readonly onInitializeTranslator?: (languageCode: string) => Promise<void>;
 }
 
 export function LanguageSelector({ 
   selectedLanguage, 
   onLanguageChange,
-  variant = 'light'
+  variant = 'light',
+  isTranslatorReady,
+  onInitializeTranslator
 }: LanguageSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   
   const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
   
-  const handleLanguageSelect = (languageCode: string) => {
+  const handleLanguageSelect = async (languageCode: string) => {
+    // Initialize translator if not ready and it's not English
+    if (languageCode !== 'en' && isTranslatorReady && !isTranslatorReady(languageCode) && onInitializeTranslator) {
+      await onInitializeTranslator(languageCode);
+    }
+    
     onLanguageChange?.(languageCode);
     setIsOpen(false);
+  };
+
+  const getLanguageStatusIcon = (languageCode: string) => {
+    if (languageCode === 'en') return null; // English is always ready
+    
+    const ready = isTranslatorReady?.(languageCode) ?? true;
+    
+    if (ready) {
+      return (
+        <svg className="h-3 w-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+      );
+    }
+    
+    return (
+      <svg className="h-3 w-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+      </svg>
+    );
   };
 
   const dropdownClasses = variant === 'dark' 
@@ -82,16 +111,21 @@ export function LanguageSelector({
                     onClick={() => handleLanguageSelect(language.code)}
                   >
                     <span className="text-lg">{language.flag}</span>
-                    <span>{language.name}</span>
-                    {isSelected && (
-                      <svg
-                        className="ml-auto h-4 w-4 text-blue-600"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
+                    <div className="flex-1 flex items-center justify-between">
+                      <span>{language.name}</span>
+                      <div className="flex items-center gap-2">
+                        {getLanguageStatusIcon(language.code)}
+                        {isSelected && (
+                          <svg
+                            className="h-4 w-4 text-blue-600"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
                   </button>
                 );
               })}

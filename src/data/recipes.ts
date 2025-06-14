@@ -72,7 +72,7 @@ export const recipes: Recipe[] = [
     id: '3',
     name: 'Avocado Toast with Poached Egg',
     description: 'Simple yet delicious breakfast with creamy avocado and perfectly poached egg.',
-    imageUrl: 'https://images.unsplash.com/photo-1603046891744-1f76e6887d01?auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&q=80',
     prepTime: '5 minutes',
     cookTime: '10 minutes',
     servings: 2,

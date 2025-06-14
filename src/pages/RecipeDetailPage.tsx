@@ -8,193 +8,128 @@ import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
 import { useRecipeById } from '../hooks/useRecipes';
 import { useTranslationStatus } from '../hooks/useTranslationStatus';
 
-const loadingContainer = tv({
-  base: 'grid place-items-center py-24'
+const recipeDetailPage = tv({
+  slots: {
+    // Loading state
+    loadingContainer: 'grid place-items-center py-24',
+    loadingContent: 'text-center',
+    loadingSpinner: 'h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-600',
+    loadingText: 'mt-4 text-xl text-gray-600',
+    
+    // Error state
+    errorContainer: 'py-4',
+    errorContent: 'rounded-lg bg-red-50 p-6 text-center',
+    errorTitle: 'text-2xl font-bold text-red-800',
+    errorText: 'mt-2 text-red-700',
+    errorButton: 'mt-6',
+    
+    // Page layout
+    pageContainer: '',
+    
+    // Hero section
+    heroSection: 'relative',
+    heroBackground: 'absolute inset-0',
+    heroImage: 'h-full w-full object-cover',
+    heroOverlay: 'absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent',
+    heroContent: 'relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-white',
+    heroControls: 'flex items-center justify-between mb-6',
+    backButton: 'border-white text-white hover:bg-white/20',
+    heroTitle: 'text-4xl font-bold sm:text-5xl',
+    heroDescription: 'mt-4 max-w-2xl text-xl text-white/90',
+    
+    // Translation elements
+    translationBadge: 'mt-4 flex items-center gap-2',
+    translationStatus: 'flex items-center gap-2 rounded-full bg-blue-600/70 px-3 py-1 text-sm',
+    translationIcon: 'h-4 w-4',
+    
+    // Tags and content
+    tagsContainer: 'mt-8 flex flex-wrap gap-2',
+    tag: 'rounded-full bg-blue-600/70 px-3 py-1 text-sm',
+    
+    // Recipe details section
+    recipeDetails: 'py-12',
+    statusPanelContainer: 'mb-8',
+    contentGrid: 'grid gap-8 md:grid-cols-3',
+    
+    // Sidebar
+    sidebar: 'rounded-lg bg-gray-50 p-6',
+    sidebarTitle: 'text-lg font-semibold',
+    sidebarList: 'mt-4 space-y-4',
+    sidebarItem: '',
+    sidebarLabel: 'text-sm text-gray-500',
+    sidebarValue: 'font-medium',
+    
+    // Main content
+    mainContent: 'md:col-span-2 space-y-8',
+    section: '',
+    sectionHeader: 'flex items-center justify-between',
+    sectionTitle: 'text-2xl font-bold',
+    translatedLabel: 'text-sm text-gray-500 flex items-center gap-1',
+    translatedIcon: 'h-3 w-3',
+    
+    // Ingredients
+    ingredientsList: 'mt-4 space-y-2',
+    ingredientItem: 'flex items-start',
+    ingredientBullet: 'mr-2 mt-1 flex h-2 w-2 rounded-full bg-blue-600',
+    ingredientText: '',
+    
+    // Instructions
+    instructionsList: 'mt-4 space-y-6',
+    instructionItem: 'flex',
+    instructionNumber: 'mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-800',
+    instructionText: 'pt-1'
+  }
 });
 
-const loadingContent = tv({
-  base: 'text-center'
-});
-
-const loadingSpinner = tv({
-  base: 'h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-600'
-});
-
-const loadingText = tv({
-  base: 'mt-4 text-xl text-gray-600'
-});
-
-const errorContainer = tv({
-  base: 'py-4'
-});
-
-const errorContent = tv({
-  base: 'rounded-lg bg-red-50 p-6 text-center'
-});
-
-const errorTitle = tv({
-  base: 'text-2xl font-bold text-red-800'
-});
-
-const errorText = tv({
-  base: 'mt-2 text-red-700'
-});
-
-const errorButton = tv({
-  base: 'mt-6'
-});
-
-const pageContainer = tv({
-  base: ''
-});
-
-const heroSection = tv({
-  base: 'relative'
-});
-
-const heroBackground = tv({
-  base: 'absolute inset-0'
-});
-
-const heroImage = tv({
-  base: 'h-full w-full object-cover'
-});
-
-const heroOverlay = tv({
-  base: 'absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent'
-});
-
-const heroContent = tv({
-  base: 'relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-white'
-});
-
-const heroControls = tv({
-  base: 'flex items-center justify-between mb-6'
-});
-
-const backButton = tv({
-  base: 'border-white text-white hover:bg-white/20'
-});
-
-const heroTitle = tv({
-  base: 'text-4xl font-bold sm:text-5xl'
-});
-
-const heroDescription = tv({
-  base: 'mt-4 max-w-2xl text-xl text-white/90'
-});
-
-const translationBadge = tv({
-  base: 'mt-4 flex items-center gap-2'
-});
-
-const translationStatus = tv({
-  base: 'flex items-center gap-2 rounded-full bg-blue-600/70 px-3 py-1 text-sm'
-});
-
-const translationIcon = tv({
-  base: 'h-4 w-4'
-});
-
-const tagsContainer = tv({
-  base: 'mt-8 flex flex-wrap gap-2'
-});
-
-const tag = tv({
-  base: 'rounded-full bg-blue-600/70 px-3 py-1 text-sm'
-});
-
-const recipeDetails = tv({
-  base: 'py-12'
-});
-
-const statusPanelContainer = tv({
-  base: 'mb-8'
-});
-
-const contentGrid = tv({
-  base: 'grid gap-8 md:grid-cols-3'
-});
-
-const sidebar = tv({
-  base: 'rounded-lg bg-gray-50 p-6'
-});
-
-const sidebarTitle = tv({
-  base: 'text-lg font-semibold'
-});
-
-const sidebarList = tv({
-  base: 'mt-4 space-y-4'
-});
-
-const sidebarItem = tv({
-  base: ''
-});
-
-const sidebarLabel = tv({
-  base: 'text-sm text-gray-500'
-});
-
-const sidebarValue = tv({
-  base: 'font-medium'
-});
-
-const mainContent = tv({
-  base: 'md:col-span-2 space-y-8'
-});
-
-const section = tv({
-  base: ''
-});
-
-const sectionHeader = tv({
-  base: 'flex items-center justify-between'
-});
-
-const sectionTitle = tv({
-  base: 'text-2xl font-bold'
-});
-
-const translatedLabel = tv({
-  base: 'text-sm text-gray-500 flex items-center gap-1'
-});
-
-const translatedIcon = tv({
-  base: 'h-3 w-3'
-});
-
-const ingredientsList = tv({
-  base: 'mt-4 space-y-2'
-});
-
-const ingredientItem = tv({
-  base: 'flex items-start'
-});
-
-const ingredientBullet = tv({
-  base: 'mr-2 mt-1 flex h-2 w-2 rounded-full bg-blue-600'
-});
-
-const ingredientText = tv({
-  base: ''
-});
-
-const instructionsList = tv({
-  base: 'mt-4 space-y-6'
-});
-
-const instructionItem = tv({
-  base: 'flex'
-});
-
-const instructionNumber = tv({
-  base: 'mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-800'
-});
-
-const instructionText = tv({
-  base: 'pt-1'
-});
+const {
+  loadingContainer,
+  loadingContent,
+  loadingSpinner,
+  loadingText,
+  errorContainer,
+  errorContent,
+  errorTitle,
+  errorText,
+  errorButton,
+  pageContainer,
+  heroSection,
+  heroBackground,
+  heroImage,
+  heroOverlay,
+  heroContent,
+  heroControls,
+  backButton,
+  heroTitle,
+  heroDescription,
+  translationBadge,
+  translationStatus,
+  translationIcon,
+  tagsContainer,
+  tag,
+  recipeDetails,
+  statusPanelContainer,
+  contentGrid,
+  sidebar,
+  sidebarTitle,
+  sidebarList,
+  sidebarItem,
+  sidebarLabel,
+  sidebarValue,
+  mainContent,
+  section,
+  sectionHeader,
+  sectionTitle,
+  translatedLabel,
+  translatedIcon,
+  ingredientsList,
+  ingredientItem,
+  ingredientBullet,
+  ingredientText,
+  instructionsList,
+  instructionItem,
+  instructionNumber,
+  instructionText
+} = recipeDetailPage();
 
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();

@@ -4,45 +4,33 @@ import { tv } from 'tailwind-variants';
 import { Button } from '../components/Button';
 import { SearchInput } from '../components/SearchInput';
 
-const pageContainer = tv({
-  base: 'relative isolate h-screen bg-white px-6 lg:px-8'
+const homePage = tv({
+  slots: {
+    container: 'relative isolate h-screen bg-white px-6 lg:px-8',
+    content: 'mx-auto max-w-2xl py-32 sm:py-48 lg:py-56',
+    textSection: 'text-center',
+    title: 'text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl',
+    subtitle: 'mt-6 text-lg leading-8 text-gray-600',
+    searchSection: 'mt-10',
+    searchForm: 'flex flex-col gap-4 sm:flex-row',
+    searchInput: 'flex-1',
+    tagsSection: 'mt-10',
+    tagsContainer: 'flex flex-wrap justify-center gap-2'
+  }
 });
 
-const contentContainer = tv({
-  base: 'mx-auto max-w-2xl py-32 sm:py-48 lg:py-56'
-});
-
-const textSection = tv({
-  base: 'text-center'
-});
-
-const mainTitle = tv({
-  base: 'text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl'
-});
-
-const subtitle = tv({
-  base: 'mt-6 text-lg leading-8 text-gray-600'
-});
-
-const searchSection = tv({
-  base: 'mt-10'
-});
-
-const searchForm = tv({
-  base: 'flex flex-col gap-4 sm:flex-row'
-});
-
-const searchInput = tv({
-  base: 'flex-1'
-});
-
-const tagsSection = tv({
-  base: 'mt-10'
-});
-
-const tagsContainer = tv({
-  base: 'flex flex-wrap justify-center gap-2'
-});
+const {
+  container,
+  content,
+  textSection,
+  title,
+  subtitle,
+  searchSection,
+  searchForm,
+  searchInput,
+  tagsSection,
+  tagsContainer
+} = homePage();
 
 export function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,10 +44,10 @@ export function HomePage() {
   };
 
   return (
-    <div className={pageContainer()}>
-      <div className={contentContainer()}>
+    <div className={container()}>
+      <div className={content()}>
         <div className={textSection()}>
-          <h1 className={mainTitle()}>
+          <h1 className={title()}>
             Find the Perfect Recipe
           </h1>
           <p className={subtitle()}>

@@ -1,1 +1,31 @@
 @import "tailwindcss";
+
+/* Custom styles for AI-generated HTML summaries */
+.summary-content {
+  line-height: 1.5;
+}
+
+.summary-content p {
+  margin-bottom: 0.5rem;
+}
+
+.summary-content ul {
+  margin-bottom: 0.5rem;
+}
+
+.summary-content li {
+  margin-bottom: 0.25rem;
+}
+
+.summary-content h5 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.summary-content strong {
+  font-weight: 600;
+}
+
+.summary-content em {
+  font-style: italic;
+}

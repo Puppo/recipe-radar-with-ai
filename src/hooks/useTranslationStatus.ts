@@ -3,16 +3,6 @@ import type { TranslationStatus } from '../components/TranslationStatusNotificat
 import { languages } from '../constants/languages';
 import translatorService from '../services/ai/translatorService';
 
-interface TranslatorWindow extends Window {
-  Translator?: {
-    create: (options: {
-      sourceLanguage: string;
-      targetLanguage: string;
-      monitor?: (monitor: { addEventListener: (event: string, handler: (e: { loaded: number; total?: number }) => void) => void }) => void;
-    }) => Promise<unknown>;
-  };
-}
-
 interface UseTranslationStatusReturn {
   translations: TranslationStatus[];
   initializeTranslator: (languageCode: string) => Promise<void>;

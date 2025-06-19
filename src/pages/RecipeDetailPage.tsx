@@ -13,23 +13,19 @@ import { useTranslationStatus } from '../hooks/useTranslationStatus';
 
 const recipeDetailPage = tv({
   slots: {
-    // Loading state
     loadingContainer: 'grid place-items-center py-24',
     loadingContent: 'text-center',
     loadingSpinner: 'h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-600',
     loadingText: 'mt-4 text-xl text-gray-600',
     
-    // Error state
     errorContainer: 'py-4',
     errorContent: 'rounded-lg bg-red-50 p-6 text-center',
     errorTitle: 'text-2xl font-bold text-red-800',
     errorText: 'mt-2 text-red-700',
     errorButton: 'mt-6',
     
-    // Page layout
     pageContainer: '',
     
-    // Hero section
     heroSection: 'relative',
     heroBackground: 'absolute inset-0',
     heroImage: 'h-full w-full object-cover',
@@ -40,21 +36,18 @@ const recipeDetailPage = tv({
     heroTitle: 'text-4xl font-bold sm:text-5xl',
     heroDescription: 'mt-4 max-w-2xl text-xl text-white/90',
     
-    // Translation elements
     translationBadge: 'mt-4 flex items-center gap-2',
     translationStatus: 'flex items-center gap-2 rounded-full bg-blue-600/70 px-3 py-1 text-sm',
     translationIcon: 'h-4 w-4',
     
-    // Tags and content
+
     tagsContainer: 'mt-8 flex flex-wrap gap-2',
     tag: 'rounded-full bg-blue-600/70 px-3 py-1 text-sm',
     
-    // Recipe details section
     recipeDetails: 'py-12',
     statusPanelContainer: 'mb-8',
     contentGrid: 'grid gap-8 md:grid-cols-3',
     
-    // Sidebar
     sidebar: 'rounded-lg bg-gray-50 p-6',
     sidebarTitle: 'text-lg font-semibold',
     sidebarList: 'mt-4 space-y-4',
@@ -62,7 +55,6 @@ const recipeDetailPage = tv({
     sidebarLabel: 'text-sm text-gray-500',
     sidebarValue: 'font-medium',
     
-    // Main content
     mainContent: 'md:col-span-2 space-y-8',
     section: '',
     sectionHeader: 'flex items-center justify-between',
@@ -70,13 +62,11 @@ const recipeDetailPage = tv({
     translatedLabel: 'text-sm text-gray-500 flex items-center gap-1',
     translatedIcon: 'h-3 w-3',
     
-    // Ingredients
     ingredientsList: 'mt-4 space-y-2',
     ingredientItem: 'flex items-start',
     ingredientBullet: 'mr-2 mt-1 flex h-2 w-2 rounded-full bg-blue-600',
     ingredientText: '',
     
-    // Instructions
     instructionsList: 'mt-4 space-y-6',
     instructionItem: 'flex',
     instructionNumber: 'mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-800',
@@ -145,7 +135,6 @@ export function RecipeDetailPage() {
     isTranslatorReady
   } = useTranslationStatus();
 
-  // Recipe translation management
   const {
     isTranslating,
     translationError,
@@ -154,10 +143,8 @@ export function RecipeDetailPage() {
     hasTranslationFor
   } = useRecipeTranslation();
 
-  // Navigate back function
   const goBack = () => navigate(-1);
 
-  // Helper function to get browser language fallback
   const getBrowserLanguageFallback = useCallback(() => {
     const browserLang = navigator.language || navigator.languages?.[0];
     if (browserLang) {
@@ -174,7 +161,6 @@ export function RecipeDetailPage() {
     const initializeLanguage = async () => {
       if (hasDetectedLanguage) return;
 
-      // Don't proceed if we're still checking support
       if (supportsLanguageDetection === 'detecting') {
         console.log('Still checking language detection support...');
         return;
@@ -187,19 +173,16 @@ export function RecipeDetailPage() {
         if (supportsLanguageDetection === 'detected') {
           console.log('Language detection is supported, initializing detector...');
           
-          // Initialize language detector and wait for it to be ready
           const initialized = await initializeDetector();
           
           if (initialized) {
             console.log('Language detector initialized successfully');
             
-            // If we have a recipe, detect its language
             if (recipe) {
               console.log('Detecting recipe language...');
               detectedLang = await detectRecipeLanguage(recipe);
               console.log(`Recipe language detected as: ${detectedLang}`);
             } else {
-              // Otherwise detect browser language
               console.log('Detecting browser language...');
               detectedLang = await detectBrowserLanguage();
               console.log(`Browser language detected as: ${detectedLang}`);
@@ -219,7 +202,7 @@ export function RecipeDetailPage() {
         setHasDetectedLanguage(true);
       } catch (error) {
         console.error('Failed to detect language:', error);
-        setSelectedLanguage('en'); // Fallback to English
+        setSelectedLanguage('en');
         setHasDetectedLanguage(true);
       } finally {
         setIsInitializingLanguage(false);
@@ -229,16 +212,13 @@ export function RecipeDetailPage() {
     initializeLanguage();
   }, [recipe, hasDetectedLanguage, supportsLanguageDetection, initializeDetector, detectRecipeLanguage, detectBrowserLanguage, getBrowserLanguageFallback]);
   
-  // Handle language change
   const handleLanguageChange = async (language: string) => {
     setSelectedLanguage(language);
     
-    // Initialize translator if not ready
     if (language !== 'en' && !isTranslatorReady(language)) {
       await initializeTranslator(language);
     }
 
-    // Translate recipe if we have one and translator is ready
     if (recipe && (language === 'en' || isTranslatorReady(language))) {
       await translateRecipe(recipe, language);
     }
@@ -246,17 +226,14 @@ export function RecipeDetailPage() {
     console.log(`Translating recipe to: ${language}`);
   };
 
-  // Initialize translation when recipe loads or translator becomes ready
   useEffect(() => {
     if (recipe && selectedLanguage && selectedLanguage !== 'en' && isTranslatorReady(selectedLanguage)) {
       translateRecipe(recipe, selectedLanguage);
     }
   }, [recipe, selectedLanguage, isTranslatorReady, translateRecipe]);
 
-  // Get the content to display based on selected language
   const displayContent = selectedLanguage ? getDisplayContent(selectedLanguage) : null;
 
-  // Show loading if we haven't detected language yet or still initializing
   if (!selectedLanguage || isInitializingLanguage || supportsLanguageDetection === 'detecting') {
     let loadingMessage = 'Initializing...';
     if (supportsLanguageDetection === 'detecting') {
@@ -306,14 +283,12 @@ export function RecipeDetailPage() {
 
   return (
     <div className={pageContainer()}>
-      {/* Translation Status Notifications */}
       <TranslationStatusNotification
         translations={translations}
         onDismiss={dismissNotification}
         onRetry={retryTranslator}
       />
       
-      {/* Hero section */}
       <div className={heroSection()}>
         <div className={heroBackground()}>
           <img
@@ -345,7 +320,6 @@ export function RecipeDetailPage() {
           <h1 className={heroTitle()}>{displayContent?.name ?? recipe.name}</h1>
           <p className={heroDescription()}>{displayContent?.description ?? recipe.description}</p>
           
-          {/* Translation Status */}
           {selectedLanguage !== 'en' && (
             <div className="mt-4 flex items-center gap-2">
               {(() => {
@@ -404,9 +378,7 @@ export function RecipeDetailPage() {
         </div>
       </div>
       
-      {/* Recipe details */}
       <div className={recipeDetails()}>
-        {/* Translation Status Panel */}
         <div className={statusPanelContainer()}>
           <TranslationStatusPanel
             translations={translations}
@@ -416,7 +388,6 @@ export function RecipeDetailPage() {
         </div>
         
         <div className={contentGrid()}>
-          {/* Left sidebar with preparation info */}
           <div className={sidebar()}>
             <h2 className={sidebarTitle()}>Preparation</h2>
             <dl className={sidebarList()}>
@@ -435,9 +406,7 @@ export function RecipeDetailPage() {
             </dl>
           </div>
           
-          {/* Main recipe content */}
           <div className="md:col-span-2 space-y-8">
-            {/* Ingredients */}
             <section>
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Ingredients</h2>
@@ -460,7 +429,6 @@ export function RecipeDetailPage() {
               </ul>
             </section>
             
-            {/* Instructions */}
             <section>
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Instructions</h2>

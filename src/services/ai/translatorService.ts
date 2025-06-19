@@ -8,7 +8,6 @@ class TranslatorService {
     return this._languageMap;
   }
 
-  // Make this method public for use in the hook
   async isTranslationBetweenLanguagesSupported(
     sourceLanguage: string,
     targetLanguage: string
@@ -27,15 +26,13 @@ class TranslatorService {
     }
   }
 
-  // Add method to set translator in language map
   setTranslator(languageCode: string, translator: Translator): void {
     this._languageMap[languageCode] = translator;
   }
 
-  // Translate a single text string
   async translateText(text: string, targetLanguage: string): Promise<string> {
     if (targetLanguage === 'en') {
-      return text; // No translation needed for English
+      return text;
     }
 
     const cacheKey = `${text}-${targetLanguage}`;
@@ -58,10 +55,9 @@ class TranslatorService {
     }
   }
 
-  // Translate an array of strings
   async translateArray(texts: string[], targetLanguage: string): Promise<string[]> {
     if (targetLanguage === 'en') {
-      return texts; // No translation needed for English
+      return texts;
     }
 
     const translations = await Promise.all(
@@ -70,10 +66,9 @@ class TranslatorService {
     return translations;
   }
 
-  // Translate recipe content
   async translateRecipe(recipe: Recipe, targetLanguage: string): Promise<TranslatedRecipe> {
     if (targetLanguage === 'en') {
-      return recipe; // No translation needed for English
+      return recipe;
     }
 
     try {
@@ -106,7 +101,6 @@ class TranslatorService {
     }
   }
 
-  // Get translated content from a recipe
   getTranslatedContent(recipe: TranslatedRecipe, language: string) {
     if (language === 'en') {
       return {
@@ -120,7 +114,6 @@ class TranslatorService {
 
     const translation = recipe.translations?.[language];
     if (!translation) {
-      // Return original content if translation not available
       return {
         name: recipe.name,
         description: recipe.description,
@@ -133,7 +126,6 @@ class TranslatorService {
     return translation;
   }
 
-  // Check if recipe has translation for language
   hasTranslation(recipe: TranslatedRecipe, language: string): boolean {
     return language === 'en' || !!recipe.translations?.[language];
   }

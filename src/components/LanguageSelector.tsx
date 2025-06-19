@@ -109,7 +109,6 @@ export function LanguageSelector({
   const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
   
   const handleLanguageSelect = async (languageCode: string) => {
-    // Initialize translator if not ready and it's not English
     if (languageCode !== 'en' && isTranslatorReady && !isTranslatorReady(languageCode) && onInitializeTranslator) {
       await onInitializeTranslator(languageCode);
     }
@@ -119,7 +118,7 @@ export function LanguageSelector({
   };
 
   const getLanguageStatusIcon = (languageCode: string) => {
-    if (languageCode === 'en') return null; // English is always ready
+    if (languageCode === 'en') return null;
     
     const ready = isTranslatorReady?.(languageCode) ?? true;
     const status = ready ? 'ready' : 'downloading';
@@ -162,7 +161,6 @@ export function LanguageSelector({
 
       {isOpen && (
         <>
-          {/* Backdrop */}
           <button 
             className={backdrop()} 
             onClick={() => setIsOpen(false)}
@@ -174,7 +172,6 @@ export function LanguageSelector({
             aria-label="Close language selector"
           />
           
-          {/* Dropdown */}
           <div className={dropdown()}>
             <div className={dropdownContent()}>
               {languages.map((language) => {

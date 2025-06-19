@@ -24,7 +24,6 @@ export function useSummarizer(): UseSummarizerReturn {
   const summarizeRecipe = useCallback(async (recipe: Recipe) => {
     const recipeId = recipe.id;
     
-    // Set loading state
     setSummaryStates(prev => ({
       ...prev,
       [recipeId]: {
@@ -60,7 +59,6 @@ export function useSummarizer(): UseSummarizerReturn {
   }, []);
 
   const summarizeRecipeById = useCallback(async (recipeId: string) => {
-    // Set loading state
     setSummaryStates(prev => ({
       ...prev,
       [recipeId]: {

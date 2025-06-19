@@ -21,7 +21,6 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
   const [detectionError, setDetectionError] = useState<string | null>(null);
   const [supportsLanguageDetection, setSupportsLanguageDetection] = useState<LanguageDetectionSupport>('detecting');
 
-  // Check support on mount
   useEffect(() => {
     const checkSupport = async () => {
       try {
@@ -39,7 +38,6 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
   const initializeDetector = useCallback(async (): Promise<boolean> => {
     if (supportsLanguageDetection === 'unavailable') return false;
     if (supportsLanguageDetection === 'detecting') {
-      // Wait for support detection to complete
       console.log('Waiting for language detection support check to complete...');
       return false;
     }
@@ -57,7 +55,7 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
 
   const detectRecipeLanguage = useCallback(async (recipe: Recipe): Promise<string> => {
     if (supportsLanguageDetection !== 'detected') {
-      return 'en'; // Fallback to English if not supported or still detecting
+      return 'en';
     }
 
     try {
@@ -67,7 +65,6 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
       const detectedLang = await languageDetectionService.detectRecipeLanguage(recipe);
       setDetectedLanguage(detectedLang);
       
-      // Validate that the detected language is in our supported list
       const isSupported = languages.some(lang => lang.code === detectedLang);
       if (!isSupported) {
         console.warn(`Detected language '${detectedLang}' is not supported, using English`);
@@ -79,7 +76,7 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
       const errorMessage = error instanceof Error ? error.message : 'Language detection failed';
       setDetectionError(errorMessage);
       console.error('Recipe language detection failed:', error);
-      return 'en'; // Fallback to English
+      return 'en';
     } finally {
       setIsDetecting(false);
     }
@@ -87,10 +84,9 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
 
   const detectBrowserLanguage = useCallback(async (): Promise<string> => {
     if (supportsLanguageDetection !== 'detected') {
-      // Fallback to browser language without AI detection
       const browserLang = navigator.language || navigator.languages?.[0];
       if (browserLang) {
-        const langCode = browserLang.split('-')[0]; // Extract language code (e.g., 'en' from 'en-US')
+        const langCode = browserLang.split('-')[0];
         const supportedLang = languages.find(lang => lang.code === langCode);
         if (supportedLang) {
           return supportedLang.code;
@@ -106,7 +102,6 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
       const detectedLang = await languageDetectionService.detectBrowserLanguage();
       setDetectedLanguage(detectedLang);
       
-      // Validate that the detected language is in our supported list
       const isSupported = languages.some(lang => lang.code === detectedLang);
       if (!isSupported) {
         console.warn(`Detected language '${detectedLang}' is not supported, using English`);
@@ -118,13 +113,12 @@ export function useLanguageDetection(): UseLanguageDetectionReturn {
       const errorMessage = error instanceof Error ? error.message : 'Browser language detection failed';
       setDetectionError(errorMessage);
       console.error('Browser language detection failed:', error);
-      return 'en'; // Fallback to English
+      return 'en';
     } finally {
       setIsDetecting(false);
     }
   }, [supportsLanguageDetection]);
 
-  // Initialize the detector when the hook mounts
   useEffect(() => {
     initializeDetector();
   }, [initializeDetector]);

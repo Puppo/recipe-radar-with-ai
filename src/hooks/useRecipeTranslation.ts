@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { TranslatedRecipe } from '../services/ai/translatorService';
 import translatorService from '../services/ai/translatorService';
-import type { Recipe } from '../types/recipe';
+import type { Recipe, TranslatedRecipe } from '../types/recipe';
 
 interface UseRecipeTranslationReturn {
   translatedRecipe: TranslatedRecipe | null;
@@ -26,13 +25,11 @@ export function useRecipeTranslation(): UseRecipeTranslationReturn {
   const translateRecipe = useCallback(async (recipe: Recipe, targetLanguage: string) => {
     if (!recipe) return;
 
-    // If it's English or we already have translation, no need to translate
     if (targetLanguage === 'en') {
       setTranslatedRecipe(recipe);
       return;
     }
 
-    // Check if we already have this translation
     const currentTranslated = translatedRecipe || recipe;
     if (translatorService.hasTranslation(currentTranslated as TranslatedRecipe, targetLanguage)) {
       return;
@@ -63,7 +60,6 @@ export function useRecipeTranslation(): UseRecipeTranslationReturn {
     return translatorService.hasTranslation(translatedRecipe, language);
   }, [translatedRecipe]);
 
-  // Reset when recipe changes
   useEffect(() => {
     setTranslationError(null);
   }, [translatedRecipe]);

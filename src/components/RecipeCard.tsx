@@ -48,7 +48,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
   const { summarizeRecipeById, getSummary, isLoading, error, clearError } = useSummarizer();
 
   const handleSummarize = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation when clicking the button
+    e.preventDefault();
     e.stopPropagation();
     
     if (showSummary) {
@@ -108,7 +108,6 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           </Button>
         </div>
 
-        {/* Error state */}
         {currentError && (
           <div className={errorContainer()}>
             <p className={errorText()}>{currentError}</p>
@@ -126,7 +125,6 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           </div>
         )}
 
-        {/* Summary display */}
         {showSummary && currentSummary && (
           <div className={summaryContainer()}>
             <h4 className={summaryTitle()}>AI Summary</h4>

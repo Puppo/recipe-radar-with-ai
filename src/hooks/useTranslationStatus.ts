@@ -48,21 +48,19 @@ export function useTranslationStatus(): UseTranslationStatusReturn {
 
   const initializeTranslator = useCallback(async (languageCode: string) => {
     if (languageCode === 'en' || translatorService.languageMap[languageCode]) {
-      return; // Already ready or is source language
+      return;
     }
 
     const language = languages.find(l => l.code === languageCode);
     if (!language) return;
 
     try {
-      // Update status to checking
       updateTranslationStatus(languageCode, { 
         status: 'checking',
         error: undefined,
         dismissed: false
       });
 
-      // Check if translation is supported
       const availability = await translatorService.isTranslationBetweenLanguagesSupported('en', languageCode);
       
       if (availability === 'unavailable') {
@@ -74,7 +72,6 @@ export function useTranslationStatus(): UseTranslationStatusReturn {
         return;
       }
 
-      // Update status to downloading
       updateTranslationStatus(languageCode, { 
         status: 'downloading',
         progress: 0
@@ -95,10 +92,10 @@ export function useTranslationStatus(): UseTranslationStatusReturn {
         },
       });
 
-      // Store the translator
+
       translatorService.setTranslator(languageCode, translator);
 
-      // Update status to ready
+
       updateTranslationStatus(languageCode, { 
         status: 'ready',
         progress: 100
@@ -114,7 +111,6 @@ export function useTranslationStatus(): UseTranslationStatusReturn {
   }, [updateTranslationStatus]);
 
   const retryTranslator = useCallback(async (languageCode: string) => {
-    // Reset status and retry
     updateTranslationStatus(languageCode, { 
       status: 'idle',
       error: undefined,
@@ -148,8 +144,6 @@ export function useTranslationStatus(): UseTranslationStatusReturn {
     const translation = translations.find(t => t.languageCode === languageCode);
     return translation?.progress ?? 0;
   }, [translations]);
-
-  // Helper function to calculate estimated time
   const calculateEstimatedTime = (progress: number): string => {
     if (progress <= 0) return 'Calculating...';
     if (progress >= 90) return 'Almost done';

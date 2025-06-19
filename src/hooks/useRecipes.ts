@@ -2,14 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { recipeService } from '../services/recipeService';
 
-/**
- * Hook for searching recipes with debounce
- */
+
 export function useRecipeSearch(query: string) {
-  // State for debounced query
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   
-  // Debounce the query input
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(query);
@@ -18,7 +14,6 @@ export function useRecipeSearch(query: string) {
     return () => clearTimeout(timeoutId);
   }, [query]);
   
-  // Use React Query to fetch search results
   const { 
     data: results = [], 
     isLoading, 
@@ -32,14 +27,11 @@ export function useRecipeSearch(query: string) {
   
   return { 
     results, 
-    isLoading: debouncedQuery !== query || isLoading, // Show loading when debouncing
+    isLoading: debouncedQuery !== query || isLoading,
     error: error instanceof Error ? error.message : null 
   };
 }
 
-/**
- * Hook for fetching a recipe by ID
- */
 export function useRecipeById(id: string | undefined) {
   const {
     data: recipe,
@@ -58,9 +50,6 @@ export function useRecipeById(id: string | undefined) {
   };
 }
 
-/**
- * Hook for fetching all recipes
- */
 export function useAllRecipes() {
   const {
     data: recipes = [],

@@ -3,7 +3,6 @@ class LanguageDetectionService {
   private _isInitialized = false;
   private _initPromise: Promise<boolean> | null = null;
 
-  // Check if language detection is supported
   async checkLanguageDetectionSupport(): Promise<Availability> {
     console.log('Checking language detection support...');
     if (!('LanguageDetector' in self)) {
@@ -21,7 +20,6 @@ class LanguageDetectionService {
     }
   }
 
-  // Initialize the language detector
   async initializeDetector(): Promise<boolean> {
     if (this._isInitialized) return true;
     if (this._initPromise) return this._initPromise;
@@ -57,7 +55,6 @@ class LanguageDetectionService {
     }
   }
 
-  // Detect language from text
   async detectLanguage(text: string): Promise<LanguageDetectionResult[]> {
     if (!this._isInitialized || !this._detector) {
       const initialized = await this.initializeDetector();
@@ -73,7 +70,6 @@ class LanguageDetectionService {
     }
   }
 
-  // Get supported languages mapping for our app
   private getSupportedLanguageMapping(): Record<string, string> {
     return {
       'en': 'en',
@@ -90,16 +86,13 @@ class LanguageDetectionService {
     };
   }
 
-  // Map detected language to our supported languages
   mapToSupportedLanguage(detectedLanguage: string): string {
     const mapping = this.getSupportedLanguageMapping();
-    return mapping[detectedLanguage] || 'en'; // Default to English if not supported
+    return mapping[detectedLanguage] || 'en';
   }
 
-  // Detect language from recipe content and return mapped language
   async detectRecipeLanguage(recipe: { name: string; description: string; ingredients: string[] }): Promise<string> {
     try {
-      // Use recipe name and description for detection as they're most likely to be in the original language
       const textToDetect = `${recipe.name} ${recipe.description} ${recipe.ingredients.slice(0, 3).join(' ')}`;
       
       const detections = await this.detectLanguage(textToDetect);
@@ -114,19 +107,16 @@ class LanguageDetectionService {
         return bestDetection.detectedLanguage;
       }
       
-      // Fallback to English if detection confidence is low
       console.log('Language detection confidence too low, defaulting to English');
       return 'en';
     } catch (error) {
       console.error('Recipe language detection failed:', error);
-      return 'en'; // Fallback to English
+      return 'en';
     }
   }
 
-  // Detect browser language and map to supported language
   async detectBrowserLanguage(): Promise<string> {
     try {
-      // First try to use browser language settings
       const browserLang = navigator.language || navigator.languages?.[0];
       if (browserLang) {
         const mappedLanguage = this.mapToSupportedLanguage(browserLang);
@@ -136,7 +126,6 @@ class LanguageDetectionService {
         }
       }
 
-      // If browser language is not supported or is English, try detecting from a sample text
       const sampleText = "Welcome to Recipe Radar. Find and discover amazing recipes.";
       const detections = await this.detectLanguage(sampleText);
 
@@ -147,7 +136,7 @@ class LanguageDetectionService {
         return mappedLanguage;
       }
 
-      return 'en'; // Default to English
+      return 'en';
     } catch (error) {
       console.error('Browser language detection failed:', error);
       return 'en';

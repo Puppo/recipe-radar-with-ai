@@ -51,7 +51,6 @@ export function SearchPage() {
   };
 
   useEffect(() => {
-    // Update the search input when the URL query changes
     setSearchQuery(query);
   }, [query]);
 
@@ -71,7 +70,6 @@ export function SearchPage() {
         </div>
       )}
 
-      {/* Loading state */}
       {isLoading && (
         <div className={loadingContainer()}>
           <div className={loadingContent()}>
@@ -81,7 +79,6 @@ export function SearchPage() {
         </div>
       )}
 
-      {/* Results found */}
       {!isLoading && results.length > 0 && (
         <div className={resultsSection()}>
           <h2 className={resultsTitle()}>Results for "{query}"</h2>
@@ -93,7 +90,6 @@ export function SearchPage() {
         </div>
       )}
 
-      {/* No results found */}
       {!isLoading && results.length === 0 && query && (
         <div className={noResultsContainer()}>
           <h2 className={noResultsTitle()}>No recipes found for "{query}"</h2>

@@ -19,8 +19,9 @@ const router = createBrowserRouter([
       { path: 'search', element: <SearchPage /> },
       { path: 'recipes/:id', element: <RecipeDetailPage /> }
     ]
-  }
-]);
+  }], {
+  basename: '/recipe-radar-with-ai/',
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

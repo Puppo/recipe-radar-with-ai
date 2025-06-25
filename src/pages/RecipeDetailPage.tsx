@@ -159,7 +159,7 @@ export function RecipeDetailPage() {
 
   useEffect(() => {
     const initializeLanguage = async () => {
-      if (hasDetectedLanguage) return;
+      if (hasDetectedLanguage || !recipe) return;
 
       if (supportsLanguageDetection === 'detecting') {
         console.log('Still checking language detection support...');

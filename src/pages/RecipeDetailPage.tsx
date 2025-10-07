@@ -53,7 +53,7 @@ function RecipeDetailPageContent({
     isResponding: isChatTyping,
     sendMessageStreaming
   } = usePromptApi();
-  
+
   const {
     detectRecipeLanguage,
     detectBrowserLanguage,

@@ -58,15 +58,6 @@ export function PromptApiProvider({
     checkAvailability();
   }, []);
 
-  const updateTokenInfo = useCallback(() => {
-    // Token info methods can be added to service if needed
-    setTokenInfo({
-      maxTokens: null,
-      tokensLeft: null,
-      tokensSoFar: null
-    });
-  }, []);
-
   const initializeSession = useCallback(async (opts?: LanguageModelCreateOptions): Promise<boolean> => {
     if (availability === 'unavailable') {
       const errorMsg = 'Prompt API is not available in this browser';
@@ -80,7 +71,6 @@ export function PromptApiProvider({
 
     try {
       await promptApiService.current.createSession(opts || sessionOptions);
-      updateTokenInfo();
       setIsInitializing(false);
       return true;
     } catch (err) {
@@ -90,7 +80,7 @@ export function PromptApiProvider({
       onError?.(err instanceof Error ? err : new Error(errorMessage));
       return false;
     }
-  }, [availability, sessionOptions, onError, updateTokenInfo]);
+  }, [availability, sessionOptions, onError]);
 
   // Auto-initialize if requested
   useEffect(() => {
@@ -135,7 +125,6 @@ export function PromptApiProvider({
 
     try {
       const response = await promptApiService.current.prompt(message, sessionOptions);
-      updateTokenInfo();
 
       const assistantMessage: ChatMessage = {
         id: `assistant-${++messageIdCounter.current}`,
@@ -152,7 +141,7 @@ export function PromptApiProvider({
     } finally {
       setIsResponding(false);
     }
-  }, [sessionOptions, addMessage, updateTokenInfo, onError]);
+  }, [sessionOptions, addMessage, onError]);
 
   const sendMessageStreaming = useCallback(async (message: string): Promise<void> => {
     if (!message.trim()) return;
@@ -190,7 +179,6 @@ export function PromptApiProvider({
         sessionOptions
       );
 
-      updateTokenInfo();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to get response from AI';
       setError(errorMessage);
@@ -202,7 +190,7 @@ export function PromptApiProvider({
       setIsResponding(false);
       currentStreamingMessageId.current = null;
     }
-  }, [sessionOptions, addMessage, updateLastMessage, updateTokenInfo, onError]);
+  }, [sessionOptions, addMessage, updateLastMessage, onError]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);

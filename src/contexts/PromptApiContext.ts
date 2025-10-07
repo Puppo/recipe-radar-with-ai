@@ -7,11 +7,6 @@ export interface PromptApiContextValue {
   isInitializing: boolean;
   isResponding: boolean;
   error: string | null;
-  tokenInfo: {
-    maxTokens: number | null;
-    tokensLeft: number | null;
-    tokensSoFar: number | null;
-  };
   sendMessage: (message: string) => Promise<void>;
   sendMessageStreaming: (message: string) => Promise<void>;
   clearMessages: () => void;

@@ -28,15 +28,6 @@ export function PromptApiProvider({
   const [isInitializing, setIsInitializing] = useState(false);
   const [isResponding, setIsResponding] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [tokenInfo, setTokenInfo] = useState<{
-    maxTokens: number | null;
-    tokensLeft: number | null;
-    tokensSoFar: number | null;
-  }>({
-    maxTokens: null,
-    tokensLeft: null,
-    tokensSoFar: null
-  });
 
   const messageIdCounter = useRef(0);
   const currentStreamingMessageId = useRef<string | null>(null);
@@ -224,11 +215,6 @@ export function PromptApiProvider({
 
   const destroySession = useCallback(() => {
     promptApiService.current.destroySession();
-    setTokenInfo({
-      maxTokens: null,
-      tokensLeft: null,
-      tokensSoFar: null
-    });
   }, []);
 
   const value: PromptApiContextValue = {
@@ -237,7 +223,6 @@ export function PromptApiProvider({
     isInitializing,
     isResponding,
     error,
-    tokenInfo,
     sendMessage,
     sendMessageStreaming,
     clearMessages,

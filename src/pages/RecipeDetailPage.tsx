@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tv } from 'tailwind-variants';
 import { Button } from '../components/Button';
+import { Chat, type ChatMessage } from '../components/Chat';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { TranslationStatusNotification } from '../components/TranslationStatusNotification';
 import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
@@ -118,6 +119,8 @@ export function RecipeDetailPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [hasDetectedLanguage, setHasDetectedLanguage] = useState(false);
   const [isInitializingLanguage, setIsInitializingLanguage] = useState(true);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isChatTyping, setIsChatTyping] = useState(false);
   
   const {
     detectRecipeLanguage,
@@ -233,6 +236,30 @@ export function RecipeDetailPage() {
   }, [recipe, selectedLanguage, isTranslatorReady, translateRecipe]);
 
   const displayContent = selectedLanguage ? getDisplayContent(selectedLanguage) : null;
+
+  const handleSendMessage = (message: string) => {
+    // Add user message
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      type: 'user',
+      text: message,
+      timestamp: new Date()
+    };
+    setChatMessages(prev => [...prev, userMessage]);
+
+    // Simulate AI response (replace this with actual Chrome Built-in AI API call later)
+    setIsChatTyping(true);
+    setTimeout(() => {
+      const aiMessage: ChatMessage = {
+        id: `assistant-${Date.now()}`,
+        type: 'assistant',
+        text: `I received your message: "${message}". This is a placeholder response. The Chrome Built-in AI integration will be added here.`,
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, aiMessage]);
+      setIsChatTyping(false);
+    }, 1500);
+  };
 
   if (!selectedLanguage || isInitializingLanguage || supportsLanguageDetection === 'detecting') {
     let loadingMessage = 'Initializing...';
@@ -455,6 +482,15 @@ export function RecipeDetailPage() {
           </div>
         </div>
       </div>
+
+      <Chat
+        variant="light"
+        messages={chatMessages}
+        onSendMessage={handleSendMessage}
+        isTyping={isChatTyping}
+        title="Recipe Assistant"
+        subtitle="Ask me about this recipe"
+      />
     </div>
   );
 }

@@ -29,3 +29,90 @@
 .summary-content em {
   font-style: italic;
 }
+
+/* Custom styles for chat message markdown content */
+.chat-message-content {
+  line-height: 1.5;
+}
+
+.chat-message-content p {
+  margin-bottom: 0.5rem;
+}
+
+.chat-message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-message-content strong {
+  font-weight: 600;
+}
+
+.chat-message-content em {
+  font-style: italic;
+}
+
+.chat-message-content code {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.875em;
+}
+
+.chat-message-content pre {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+  margin-bottom: 0.5rem;
+}
+
+.chat-message-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.chat-message-content ul,
+.chat-message-content ol {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.chat-message-content li {
+  margin-bottom: 0.25rem;
+}
+
+.chat-message-content blockquote {
+  border-left: 0.25rem solid rgba(255, 255, 255, 0.3);
+  padding-left: 1rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.chat-message-content a {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.chat-message-content a:hover {
+  opacity: 1;
+}
+
+.chat-message-content h1,
+.chat-message-content h2,
+.chat-message-content h3,
+.chat-message-content h4,
+.chat-message-content h5,
+.chat-message-content h6 {
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-message-content h1 { font-size: 1.25em; }
+.chat-message-content h2 { font-size: 1.15em; }
+.chat-message-content h3 { font-size: 1.1em; }
+.chat-message-content h4,
+.chat-message-content h5,
+.chat-message-content h6 { font-size: 1em; }
+

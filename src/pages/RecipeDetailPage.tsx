@@ -2,15 +2,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tv } from 'tailwind-variants';
 import { Button } from '../components/Button';
-import { Chat, type ChatMessage } from '../components/Chat';
+import { Chat } from '../components/Chat';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { TranslationStatusNotification } from '../components/TranslationStatusNotification';
 import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
 import { languages } from '../constants/languages';
 import { useLanguageDetection } from '../hooks/useLanguageDetection';
+import { usePromptApi } from '../hooks/usePromptApi';
 import { useRecipeById } from '../hooks/useRecipes';
 import { useRecipeTranslation } from '../hooks/useRecipeTranslation';
 import { useTranslationStatus } from '../hooks/useTranslationStatus';
+import { PromptApiProvider } from '../providers/PromptApiProvider';
+import type { Recipe } from '../types/recipe';
 
 const recipeDetailPage = tv({
   slots: {
@@ -112,15 +115,20 @@ const {
   instructionText
 } = recipeDetailPage();
 
-export function RecipeDetailPage() {
-  const { id } = useParams<{ id: string }>();
+function RecipeDetailPageContent({
+  recipe
+}: { recipe: Recipe }) {
   const navigate = useNavigate();
-  const { recipe, isLoading, error } = useRecipeById(id);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [hasDetectedLanguage, setHasDetectedLanguage] = useState(false);
   const [isInitializingLanguage, setIsInitializingLanguage] = useState(true);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [isChatTyping, setIsChatTyping] = useState(false);
+
+  // Use Prompt API from context
+  const {
+    messages: chatMessages,
+    isResponding: isChatTyping,
+    sendMessageStreaming
+  } = usePromptApi();
   
   const {
     detectRecipeLanguage,
@@ -237,28 +245,9 @@ export function RecipeDetailPage() {
 
   const displayContent = selectedLanguage ? getDisplayContent(selectedLanguage) : null;
 
-  const handleSendMessage = (message: string) => {
-    // Add user message
-    const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
-      type: 'user',
-      text: message,
-      timestamp: new Date()
-    };
-    setChatMessages(prev => [...prev, userMessage]);
-
-    // Simulate AI response (replace this with actual Chrome Built-in AI API call later)
-    setIsChatTyping(true);
-    setTimeout(() => {
-      const aiMessage: ChatMessage = {
-        id: `assistant-${Date.now()}`,
-        type: 'assistant',
-        text: `I received your message: "${message}". This is a placeholder response. The Chrome Built-in AI integration will be added here.`,
-        timestamp: new Date()
-      };
-      setChatMessages(prev => [...prev, aiMessage]);
-      setIsChatTyping(false);
-    }, 1500);
+  const handleSendMessage = async (message: string) => {
+    // Use streaming for a better user experience
+    await sendMessageStreaming(message);
   };
 
   if (!selectedLanguage || isInitializingLanguage || supportsLanguageDetection === 'detecting') {
@@ -274,35 +263,6 @@ export function RecipeDetailPage() {
         <div className={loadingContent()}>
           <div className={loadingSpinner()}></div>
           <p className={loadingText()}>{loadingMessage}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className={loadingContainer()}>
-        <div className={loadingContent()}>
-          <div className={loadingSpinner()}></div>
-          <p className={loadingText()}>Loading recipe...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !recipe) {
-    return (
-      <div className={errorContainer()}>
-        <div className={errorContent()}>
-          <h1 className={errorTitle()}>Recipe Not Found</h1>
-          <p className={errorText()}>The recipe you're looking for doesn't exist or has been removed.</p>
-          <Button
-            variant="primary"
-            className={errorButton()}
-            onClick={goBack}
-          >
-            Go Back
-          </Button>
         </div>
       </div>
     );
@@ -492,5 +452,64 @@ export function RecipeDetailPage() {
         subtitle="Ask me about this recipe"
       />
     </div>
+  );
+}
+
+export function RecipeDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const { recipe, isLoading, error } = useRecipeById(id);
+  const navigate = useNavigate();
+  const goBack = () => navigate(-1);
+
+  // Generate system prompt based on recipe
+  const systemPrompt = recipe
+    ? `You are a helpful cooking assistant. You help users with questions about recipes, cooking techniques, ingredients, and meal planning. Be friendly, informative, and concise in your responses.
+
+If someone asks about the recipe, use the following context to inform your answers. 
+Current recipe context:
+Name: ${recipe.name}
+Description: ${recipe.description}
+Ingredients: ${recipe.ingredients.join(', ')}
+Instructions: ${recipe.instructions.join(' ')}`
+    : 'You are a helpful cooking assistant. You help users with questions about recipes, cooking techniques, ingredients, and meal planning. Be friendly, informative, and concise in your responses.';
+
+  if (isLoading) {
+    return (
+      <div className={loadingContainer()}>
+        <div className={loadingContent()}>
+          <div className={loadingSpinner()}></div>
+          <p className={loadingText()}>Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !recipe) {
+    return (
+      <div className={errorContainer()}>
+        <div className={errorContent()}>
+          <h1 className={errorTitle()}>Recipe Not Found</h1>
+          <p className={errorText()}>The recipe you're looking for doesn't exist or has been removed.</p>
+          <Button
+            variant="primary"
+            className={errorButton()}
+            onClick={goBack}
+          >
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+      <PromptApiProvider
+        systemPrompt={systemPrompt}
+        temperature={0.8}
+        topK={40}
+        autoInitialize={true}
+      >
+          <RecipeDetailPageContent recipe={recipe!} />
+      </PromptApiProvider>
   );
 }

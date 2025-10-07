@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'react';
 import { tv } from 'tailwind-variants';
 
@@ -25,7 +27,8 @@ const chat = tv({
     inputWrapper: 'flex gap-2',
     input: 'flex-1 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition-colors',
     sendButton: 'rounded-md p-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
-    sendIcon: 'h-5 w-5',
+    sendIcon: 'h-5 w-5 transition-transform',
+    sendIconEnabled: 'h-5 w-5 transition-transform rotate-90',
     emptyState: 'flex flex-col items-center justify-center h-full text-center p-8',
     emptyIcon: 'h-16 w-16 mb-4 opacity-50',
     emptyTitle: 'text-lg font-semibold mb-2',
@@ -81,7 +84,7 @@ const chat = tv({
   }
 });
 
-export interface ChatMessage {
+export type ChatMessage = {
   readonly id: string;
   readonly type: 'user' | 'assistant';
   readonly text: string;
@@ -114,6 +117,15 @@ export function Chat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Convert Markdown to sanitized HTML
+  const convertMarkdownToHtml = (markdown: string): string => {
+    const rawHtml = marked.parse(markdown, { async: false }) as string;
+    return DOMPurify.sanitize(rawHtml, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+      ALLOWED_ATTR: ['href', 'target', 'rel']
+    });
+  };
+
   const {
     container,
     chatToggleButton,
@@ -136,6 +148,7 @@ export function Chat({
     input,
     sendButton,
     sendIcon,
+    sendIconEnabled,
     emptyState,
     emptyIcon,
     emptyTitle,
@@ -167,7 +180,7 @@ export function Chat({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -227,14 +240,17 @@ export function Chat({
                     messageType: message.type 
                   });
                   
-                  return (
+                  return message.text ? (
                     <div key={message.id} className={messageWrapper()}>
                       <div className={messageBubble()}>
-                        <p className={messageText()}>{message.text}</p>
+                        <div 
+                          className={`${messageText()} chat-message-content`}
+                          dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(message.text) }}
+                        />
                         <p className={messageTime()}>{formatTime(message.timestamp)}</p>
                       </div>
                     </div>
-                  );
+                  ) : null;
                 })}
                 
                 {isTyping && (
@@ -260,10 +276,9 @@ export function Chat({
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyUp={handleKeyUp}
                 placeholder={placeholder}
                 className={input()}
-                disabled={isTyping}
               />
               <button
                 onClick={handleSendMessage}
@@ -271,7 +286,12 @@ export function Chat({
                 className={sendButton()}
                 aria-label="Send message"
               >
-                <svg className={sendIcon()} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className={inputValue.trim() && !isTyping ? sendIconEnabled() : sendIcon()} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </button>

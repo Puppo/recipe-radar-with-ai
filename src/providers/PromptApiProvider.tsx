@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ChatMessage } from '../components/Chat';
 import { PromptApiContext, type PromptApiContextValue } from '../contexts/PromptApiContext';
-import type { PromptApiOptions } from '../services/ai/promptApiService';
 import { PromptApiService } from '../services/ai/promptApiService';
 
 interface PromptApiProviderProps {
@@ -43,10 +42,13 @@ export function PromptApiProvider({
   const currentStreamingMessageId = useRef<string | null>(null);
   const hasAutoInitialized = useRef(false);
 
-  const sessionOptions: PromptApiOptions = {
+  const sessionOptions: LanguageModelCreateOptions = {
     temperature,
     topK,
-    initialPrompt: systemPrompt
+    initialPrompts: systemPrompt ? [{
+      role: 'system',
+      content: systemPrompt
+    }] : []
   };
 
   // Check availability on mount
@@ -74,7 +76,7 @@ export function PromptApiProvider({
     });
   }, []);
 
-  const initializeSession = useCallback(async (opts?: PromptApiOptions): Promise<boolean> => {
+  const initializeSession = useCallback(async (opts?: LanguageModelCreateOptions): Promise<boolean> => {
     if (availability === 'unavailable') {
       const errorMsg = 'Prompt API is not available in this browser';
       setError(errorMsg);

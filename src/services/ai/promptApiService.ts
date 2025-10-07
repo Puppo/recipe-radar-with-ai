@@ -42,6 +42,7 @@ export class PromptApiService {
         }
 
         const sessionOptions: LanguageModelCreateOptions = {
+          initialPrompts: options.initialPrompts ?? [],
           topK: options.topK ?? 40,
           temperature: options.temperature ?? 0.7,
         }
@@ -55,6 +56,7 @@ export class PromptApiService {
           };
         }
 
+        console.log('Creating Prompt API session with options:', sessionOptions);
         const session = await LanguageModel.create(sessionOptions);
         this._session = session;
         return session;

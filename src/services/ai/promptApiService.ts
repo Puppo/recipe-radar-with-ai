@@ -56,7 +56,6 @@ export class PromptApiService {
           };
         }
 
-        console.log('Creating Prompt API session with options:', sessionOptions);
         const session = await LanguageModel.create(sessionOptions);
         this._session = session;
         return session;
@@ -107,9 +106,16 @@ export class PromptApiService {
       }
 
       const stream = this._session.promptStreaming(message);
+      const reader = stream.getReader();
       
-      for await (const chunk of stream) {
-        onChunk(chunk);
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          onChunk(value);
+        }
+      } finally {
+        reader.releaseLock();
       }
     } catch (error) {
       console.error('Failed to stream prompt response:', error);

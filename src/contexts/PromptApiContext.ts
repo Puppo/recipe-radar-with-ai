@@ -1,6 +1,5 @@
 import { createContext } from 'react';
 import type { ChatMessage } from '../components/Chat';
-import type { PromptApiOptions } from '../services/ai/promptApiService';
 
 export interface PromptApiContextValue {
   messages: ChatMessage[];
@@ -17,7 +16,7 @@ export interface PromptApiContextValue {
   sendMessageStreaming: (message: string) => Promise<void>;
   clearMessages: () => void;
   clearError: () => void;
-  initializeSession: (options?: PromptApiOptions) => Promise<boolean>;
+  initializeSession: (options?: LanguageModelCreateOptions) => Promise<boolean>;
   destroySession: () => void;
 }
 

@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { tv } from 'tailwind-variants';
-import { Chat } from '../components/Chat';
-import { TranslationStatusNotification } from '../components/TranslationStatusNotification';
-import { TranslationStatusPanel } from '../components/TranslationStatusPanel';
-import { languages } from '../constants/languages';
-import { useLanguageDetection } from '../hooks/useLanguageDetection';
-import { usePromptApi } from '../hooks/usePromptApi';
-import { useRecipeById } from '../hooks/useRecipes';
-import { useRecipeTranslation } from '../hooks/useRecipeTranslation';
-import { useTranslationStatus } from '../hooks/useTranslationStatus';
-import { PromptApiProvider } from '../providers/PromptApiProvider';
-import type { Recipe } from '../types/recipe';
+import { Chat } from '../../components/Chat';
+import { TranslationStatusNotification } from '../../components/TranslationStatusNotification';
+import { TranslationStatusPanel } from '../../components/TranslationStatusPanel';
+import { languages } from '../../constants/languages';
+import { useLanguageDetection } from '../../hooks/useLanguageDetection';
+import { usePromptApi } from '../../hooks/usePromptApi';
+import { useRecipeById } from '../../hooks/useRecipes';
+import { useRecipeTranslation } from '../../hooks/useRecipeTranslation';
+import { useTranslationStatus } from '../../hooks/useTranslationStatus';
+import { PromptApiProvider } from '../../providers/PromptApiProvider';
+import type { Recipe } from '../../types/recipe';
 import {
   ErrorState,
   LoadingState,
@@ -19,7 +19,7 @@ import {
   RecipeIngredients,
   RecipeInstructions,
   RecipePreparationInfo
-} from './RecipeDetailPage/components';
+} from './components';
 
 const recipeDetailPage = tv({
   slots: {

@@ -137,9 +137,6 @@ export class PromptApiService {
     }
   }
 
-  /**
-   * Destroy the current session and free up resources
-   */
   destroySession(): void {
     if (this._session) {
       this._session.destroy();

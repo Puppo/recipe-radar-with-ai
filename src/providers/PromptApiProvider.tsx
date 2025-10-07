@@ -246,6 +246,8 @@ export function PromptApiProvider({
     destroySession
   };
 
+  useEffect(() => destroySession, []);
+
   return (
     <PromptApiContext.Provider value={value}>
       {children}

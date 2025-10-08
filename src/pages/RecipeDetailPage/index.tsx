@@ -217,8 +217,8 @@ function RecipeDetailPageContent({
         
         <div className={contentGrid()}>
           <RecipePreparationInfo
-            prepTime={recipe.prepTime}
-            cookTime={recipe.cookTime}
+            prepTime={displayContent?.prepTime ?? recipe.prepTime}
+            cookTime={displayContent?.cookTime ?? recipe.cookTime}
             servings={recipe.servings}
           />
           

@@ -14,11 +14,5 @@ export interface Recipe {
 export type RecipePreview = Pick<Recipe, 'id' | 'name' | 'description' | 'imageUrl'>;
 
 export interface TranslatedRecipe extends Recipe {
-  translations?: Record<string, {
-    name: string;
-    description: string;
-    ingredients: string[];
-    instructions: string[];
-    tags: string[];
-  }>;
+  translations?: Record<string, Omit<Recipe, 'id' | 'imageUrl' | 'servings'>>;
 }

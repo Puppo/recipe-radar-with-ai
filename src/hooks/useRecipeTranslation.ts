@@ -7,13 +7,7 @@ interface UseRecipeTranslationReturn {
   isTranslating: boolean;
   translationError: string | null;
   translateRecipe: (recipe: Recipe, targetLanguage: string) => Promise<void>;
-  getDisplayContent: (language: string) => {
-    name: string;
-    description: string;
-    ingredients: string[];
-    instructions: string[];
-    tags: string[];
-  } | null;
+  getDisplayContent: (language: string) => Omit<Recipe, 'id' | 'imageUrl' | 'servings'> | null;
   hasTranslationFor: (language: string) => boolean;
 }
 

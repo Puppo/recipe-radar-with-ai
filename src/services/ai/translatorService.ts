@@ -72,12 +72,14 @@ class TranslatorService {
     }
 
     try {
-      const [name, description, ingredients, instructions, tags] = await Promise.all([
+      const [name, description, ingredients, instructions, tags, cookTime, prepTime] = await Promise.all([
         this.translateText(recipe.name, targetLanguage),
         this.translateText(recipe.description, targetLanguage),
         this.translateArray(recipe.ingredients, targetLanguage),
         this.translateArray(recipe.instructions, targetLanguage),
-        this.translateArray(recipe.tags, targetLanguage)
+        this.translateArray(recipe.tags, targetLanguage),
+        this.translateText(recipe.cookTime, targetLanguage),
+        this.translateText(recipe.prepTime, targetLanguage),
       ]);
 
       const translatedRecipe: TranslatedRecipe = {
@@ -89,7 +91,9 @@ class TranslatorService {
             description,
             ingredients,
             instructions,
-            tags
+            tags,
+            cookTime,
+            prepTime,
           }
         }
       };
@@ -101,14 +105,16 @@ class TranslatorService {
     }
   }
 
-  getTranslatedContent(recipe: TranslatedRecipe, language: string) {
+  getTranslatedContent(recipe: TranslatedRecipe, language: string): Omit<Recipe, 'id' | 'imageUrl' | 'servings'> {
     if (language === 'en') {
       return {
         name: recipe.name,
         description: recipe.description,
         ingredients: recipe.ingredients,
         instructions: recipe.instructions,
-        tags: recipe.tags
+        tags: recipe.tags,
+        cookTime: recipe.cookTime,
+        prepTime: recipe.prepTime,
       };
     }
 
@@ -119,7 +125,9 @@ class TranslatorService {
         description: recipe.description,
         ingredients: recipe.ingredients,
         instructions: recipe.instructions,
-        tags: recipe.tags
+        tags: recipe.tags,
+        cookTime: recipe.cookTime,
+        prepTime: recipe.prepTime,
       };
     }
 

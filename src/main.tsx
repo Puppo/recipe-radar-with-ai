@@ -8,6 +8,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { HomePage } from './pages/HomePage';
 import { RecipeDetailPage } from './pages/RecipeDetailPage';
 import { SearchPage } from './pages/SearchPage';
+import { LanguageDetectionProvider } from './providers/LanguageDetectionProvider';
 import { QueryProvider } from './providers/QueryProvider';
 
 const router = createBrowserRouter([
@@ -26,7 +27,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryProvider>
-      <RouterProvider router={router} />
+      <LanguageDetectionProvider>
+        <RouterProvider router={router} />
+      </LanguageDetectionProvider>
     </QueryProvider>
   </StrictMode>,
 )

@@ -11,6 +11,7 @@ import { useRecipeById } from '../../hooks/useRecipes';
 import { useRecipeTranslation } from '../../hooks/useRecipeTranslation';
 import { useTranslationStatus } from '../../hooks/useTranslationStatus';
 import { PromptApiProvider } from '../../providers/PromptApiProvider';
+import { RecipeTranslationProvider } from '../../providers/RecipeTranslationProvider';
 import type { Recipe } from '../../types/recipe';
 import {
   ErrorState,
@@ -275,13 +276,15 @@ Instructions: ${recipe.instructions.join(' ')}`
   }
 
   return (
-      <PromptApiProvider
-        systemPrompt={systemPrompt}
-        temperature={0.8}
-        topK={40}
-        autoInitialize={true}
-      >
-          <RecipeDetailPageContent recipe={recipe!} />
-      </PromptApiProvider>
+    <PromptApiProvider
+      systemPrompt={systemPrompt}
+      temperature={0.8}
+      topK={40}
+      autoInitialize={true}
+    >
+      <RecipeTranslationProvider>
+        <RecipeDetailPageContent recipe={recipe!} />
+      </RecipeTranslationProvider>
+    </PromptApiProvider>
   );
 }

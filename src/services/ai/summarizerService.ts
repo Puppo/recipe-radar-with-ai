@@ -2,98 +2,69 @@ import type { Recipe } from '../../types/recipe';
 import { recipeService } from '../recipeService';
 
 class SummarizerService {
-  private readonly _summaryCache: Record<string, string> = {};
-  private _summarizer: Summarizer | null = null;
+  private readonly summaryCache = new Map<string, string>();
+  private summarizer: Summarizer | null = null;
 
   async checkSummarizerSupport(): Promise<string> {
     if (!('Summarizer' in self)) return 'unavailable';
     
     try {
-      const response = await Summarizer.availability();
-      console.log('Summarizer support:', response);
-      return response;
-    } catch (error) {
-      console.error('Error checking summarizer support:', error);
+      return await Summarizer.availability();
+    } catch {
       return 'unavailable';
     }
   }
 
   async initializeSummarizer(): Promise<boolean> {
-    if (this._summarizer) return true;
+    if (this.summarizer) return true;
 
     const support = await this.checkSummarizerSupport();
     if (support === 'unavailable') {
       throw new Error('Summarizer is not available in this browser');
     }
 
-    try {
-      if (support === 'after-download') {
-        console.log('Downloading summarizer model...');
-      }
+    this.summarizer = await Summarizer.create({
+      type: 'key-points',
+      format: 'markdown',
+      length: 'short'
+    });
 
-      this._summarizer = await Summarizer.create({
-        type: 'key-points',
-        format: 'markdown',
-        length: 'short'
-      });
-
-      return true;
-    } catch (error) {
-      console.error('Failed to initialize summarizer:', error);
-      throw error;
-    }
+    return true;
   }
 
   async summarizeRecipe(recipe: Recipe): Promise<string> {
-    const cacheKey = `recipe-${recipe.id}`;
-    if (this._summaryCache[cacheKey]) {
-      return this._summaryCache[cacheKey];
-    }
-
-    await this.initializeSummarizer();
-    
-    if (!this._summarizer) {
-      throw new Error('Summarizer not initialized');
-    }
-
-    try {
+    return this.getSummary(recipe.id, async () => {
       const recipeText = this.formatRecipeForSummarization(recipe);
-      
-      const summary = await this._summarizer.summarize(recipeText);
-      this._summaryCache[cacheKey] = this.formatSummaryAsHTML(summary);
-      
-      return this._summaryCache[cacheKey];
-    } catch (error) {
-      console.error(`Failed to summarize recipe ${recipe.id}:`, error);
-      throw error;
-    }
+      return await this.generateSummary(recipeText);
+    });
   }
 
   async summarizeRecipeById(recipeId: string): Promise<string> {
-    const cacheKey = `recipe-${recipeId}`;
-    if (this._summaryCache[cacheKey]) {
-      return this._summaryCache[cacheKey];
-    }
+    return this.getSummary(recipeId, async () => {
+      const recipe = await recipeService.getRecipeById(recipeId);
+      const recipeText = this.formatRecipeForSummarization(recipe);
+      return await this.generateSummary(recipeText);
+    });
+  }
 
+  private async getSummary(recipeId: string, generator: () => Promise<string>): Promise<string> {
+    const cached = this.summaryCache.get(recipeId);
+    if (cached) return cached;
+
+    const summary = await generator();
+    this.summaryCache.set(recipeId, summary);
+    return summary;
+  }
+
+  private async generateSummary(text: string): Promise<string> {
     await this.initializeSummarizer();
     
-    if (!this._summarizer) {
+    if (!this.summarizer) {
       throw new Error('Summarizer not initialized');
     }
 
-    try {
-      const recipe = await recipeService.getRecipeById(recipeId);
-      
-      const recipeText = this.formatRecipeForSummarization(recipe);
-      
-      const summary = await this._summarizer.summarize(recipeText);
-      this._summaryCache[cacheKey] = this.formatSummaryAsHTML(summary);
-      
-      return this._summaryCache[cacheKey];
-    } catch (error) {
-      console.error(`Failed to summarize recipe ${recipeId}:`, error);
-      throw error;
-    }
+    const summary = await this.summarizer.summarize(text);
+    return this.formatSummaryAsHTML(summary);
   }
 
   private formatRecipeForSummarization(recipe: Recipe): string {
@@ -117,30 +88,31 @@ Tags: ${recipe.tags.join(', ')}
   }
 
   private formatSummaryAsHTML(summary: string): string {
-    let formattedSummary = summary
-      .replace(/^[-*•]\s+(.+)$/gm, '<li class="text-blue-800">$1</li>')
-      .replace(/^\d+\.\s+(.+)$/gm, '<li class="text-blue-800">$1</li>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-blue-900">$1</strong>')
+    const htmlClasses = {
+      list: 'text-blue-800',
+      strong: 'font-semibold text-blue-900',
+      heading: 'font-medium text-blue-900 mb-1 mt-2',
+      paragraph: 'text-blue-800 mb-2',
+      ul: 'list-disc list-inside space-y-1 ml-4 mb-2'
+    };
+
+    return summary
+      .replace(/^[-*•]\s+(.+)$/gm, `<li class="${htmlClasses.list}">$1</li>`)
+      .replace(/^\d+\.\s+(.+)$/gm, `<li class="${htmlClasses.list}">$1</li>`)
+      .replace(/\*\*(.*?)\*\*/g, `<strong class="${htmlClasses.strong}">$1</strong>`)
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/^#{1,3}\s+(.+)$/gm, '<h5 class="font-medium text-blue-900 mb-1 mt-2">$1</h5>')
-      .replace(/\n\n/g, '</p><p class="text-blue-800 mb-2">')
-      .replace(/\n/g, ' ');
-
-    formattedSummary = formattedSummary.replace(/(<li[^>]*>.*?<\/li>)(\s*<li[^>]*>.*?<\/li>)*/g, '<ul class="list-disc list-inside space-y-1 ml-4 mb-2">$&</ul>');
-    
-    if (!formattedSummary.includes('<p') && !formattedSummary.includes('<ul') && !formattedSummary.includes('<h')) {
-      formattedSummary = `<p class="text-blue-800">${formattedSummary}</p>`;
-    }
-
-    formattedSummary = formattedSummary.replace(/<p[^>]*><\/p>/g, '');
-
-    return formattedSummary;
+      .replace(/^#{1,3}\s+(.+)$/gm, `<h5 class="${htmlClasses.heading}">$1</h5>`)
+      .replace(/\n\n/g, `</p><p class="${htmlClasses.paragraph}">`)
+      .replace(/\n/g, ' ')
+      .replace(/(<li[^>]*>.*?<\/li>)(\s*<li[^>]*>.*?<\/li>)*/g, `<ul class="${htmlClasses.ul}">$&</ul>`)
+      .replace(/^(?!<[puh]|<ul)(.+)$/gm, `<p class="${htmlClasses.paragraph}">$1</p>`)
+      .replace(/<p[^>]*><\/p>/g, '');
   }
 
   destroy(): void {
-    if (this._summarizer) {
-      this._summarizer.destroy();
-      this._summarizer = null;
+    if (this.summarizer) {
+      this.summarizer.destroy();
+      this.summarizer = null;
     }
   }
 }

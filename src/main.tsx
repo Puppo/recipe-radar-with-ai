@@ -11,6 +11,7 @@ import { SearchPage } from './pages/SearchPage';
 import { LanguageDetectionProvider } from './providers/LanguageDetectionProvider';
 import { QueryProvider } from './providers/QueryProvider';
 import { SummarizerProvider } from './providers/SummarizerProvider';
+import { TranslationStatusProvider } from './providers/TranslationStatusProvider';
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,9 @@ createRoot(document.getElementById('root')!).render(
     <QueryProvider>
       <LanguageDetectionProvider>
         <SummarizerProvider>
-          <RouterProvider router={router} />
+          <TranslationStatusProvider>
+            <RouterProvider router={router} />
+          </TranslationStatusProvider>
         </SummarizerProvider>
       </LanguageDetectionProvider>
     </QueryProvider>

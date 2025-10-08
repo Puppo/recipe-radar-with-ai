@@ -1,11 +1,11 @@
 import type { Recipe, TranslatedRecipe } from '../../types/recipe';
 
 class TranslatorService {
-  private _languageMap: Record<string, Translator> = {}
-  private readonly _translationCache: Record<string, string> = {}
+  private readonly languageTranslators = new Map<string, Translator>();
+  private readonly translationCache = new Map<string, string>();
 
   get languageMap(): Record<string, Translator> {
-    return this._languageMap;
+    return Object.fromEntries(this.languageTranslators);
   }
 
   async isTranslationBetweenLanguagesSupported(
@@ -13,125 +13,84 @@ class TranslatorService {
     targetLanguage: string
   ): Promise<string> {
     if (!('Translator' in self)) return 'unavailable';
+    
     try {
-      const response = await Translator.availability({
-        sourceLanguage,
-        targetLanguage
-      });
-      console.log(`Translation support from '${sourceLanguage}' to '${targetLanguage}':`, response);
-      return response;
-    } catch (error) {
-      console.error('Error checking translation support:', error);
+      return await Translator.availability({ sourceLanguage, targetLanguage });
+    } catch {
       return 'unavailable';
     }
   }
 
   setTranslator(languageCode: string, translator: Translator): void {
-    this._languageMap[languageCode] = translator;
+    this.languageTranslators.set(languageCode, translator);
   }
 
   async translateText(text: string, targetLanguage: string): Promise<string> {
-    if (targetLanguage === 'en') {
-      return text;
-    }
+    if (targetLanguage === 'en') return text;
 
-    const cacheKey = `${text}-${targetLanguage}`;
-    if (this._translationCache[cacheKey]) {
-      return this._translationCache[cacheKey];
-    }
+    const cacheKey = `${text}|${targetLanguage}`;
+    const cached = this.translationCache.get(cacheKey);
+    if (cached) return cached;
 
-    const translator = this._languageMap[targetLanguage];
+    const translator = this.languageTranslators.get(targetLanguage);
     if (!translator) {
       throw new Error(`Translator not available for language: ${targetLanguage}`);
     }
 
-    try {
-      const translatedText = await translator.translate(text);
-      this._translationCache[cacheKey] = translatedText;
-      return translatedText;
-    } catch (error) {
-      console.error(`Translation failed for text: ${text}`, error);
-      throw error;
-    }
+    const translatedText = await translator.translate(text);
+    this.translationCache.set(cacheKey, translatedText);
+    return translatedText;
   }
 
   async translateArray(texts: string[], targetLanguage: string): Promise<string[]> {
-    if (targetLanguage === 'en') {
-      return texts;
-    }
-
-    const translations = await Promise.all(
-      texts.map(text => this.translateText(text, targetLanguage))
-    );
-    return translations;
+    if (targetLanguage === 'en') return texts;
+    return Promise.all(texts.map(text => this.translateText(text, targetLanguage)));
   }
 
   async translateRecipe(recipe: Recipe, targetLanguage: string): Promise<TranslatedRecipe> {
-    if (targetLanguage === 'en') {
-      return recipe;
-    }
+    if (targetLanguage === 'en') return recipe;
 
-    try {
-      const [name, description, ingredients, instructions, tags, cookTime, prepTime] = await Promise.all([
-        this.translateText(recipe.name, targetLanguage),
-        this.translateText(recipe.description, targetLanguage),
-        this.translateArray(recipe.ingredients, targetLanguage),
-        this.translateArray(recipe.instructions, targetLanguage),
-        this.translateArray(recipe.tags, targetLanguage),
-        this.translateText(recipe.cookTime, targetLanguage),
-        this.translateText(recipe.prepTime, targetLanguage),
-      ]);
+    const [name, description, ingredients, instructions, tags, cookTime, prepTime] = await Promise.all([
+      this.translateText(recipe.name, targetLanguage),
+      this.translateText(recipe.description, targetLanguage),
+      this.translateArray(recipe.ingredients, targetLanguage),
+      this.translateArray(recipe.instructions, targetLanguage),
+      this.translateArray(recipe.tags, targetLanguage),
+      this.translateText(recipe.cookTime, targetLanguage),
+      this.translateText(recipe.prepTime, targetLanguage),
+    ]);
 
-      const translatedRecipe: TranslatedRecipe = {
-        ...recipe,
-        translations: {
-          ...(recipe as TranslatedRecipe).translations,
-          [targetLanguage]: {
-            name,
-            description,
-            ingredients,
-            instructions,
-            tags,
-            cookTime,
-            prepTime,
-          }
+    return {
+      ...recipe,
+      translations: {
+        ...(recipe as TranslatedRecipe).translations,
+        [targetLanguage]: {
+          name,
+          description,
+          ingredients,
+          instructions,
+          tags,
+          cookTime,
+          prepTime,
         }
-      };
-
-      return translatedRecipe;
-    } catch (error) {
-      console.error(`Failed to translate recipe to ${targetLanguage}:`, error);
-      throw error;
-    }
+      }
+    };
   }
 
   getTranslatedContent(recipe: TranslatedRecipe, language: string): Omit<Recipe, 'id' | 'imageUrl' | 'servings'> {
-    if (language === 'en') {
-      return {
-        name: recipe.name,
-        description: recipe.description,
-        ingredients: recipe.ingredients,
-        instructions: recipe.instructions,
-        tags: recipe.tags,
-        cookTime: recipe.cookTime,
-        prepTime: recipe.prepTime,
-      };
-    }
+    const baseContent = {
+      name: recipe.name,
+      description: recipe.description,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      tags: recipe.tags,
+      cookTime: recipe.cookTime,
+      prepTime: recipe.prepTime,
+    };
 
-    const translation = recipe.translations?.[language];
-    if (!translation) {
-      return {
-        name: recipe.name,
-        description: recipe.description,
-        ingredients: recipe.ingredients,
-        instructions: recipe.instructions,
-        tags: recipe.tags,
-        cookTime: recipe.cookTime,
-        prepTime: recipe.prepTime,
-      };
-    }
-
-    return translation;
+    return language === 'en' || !recipe.translations?.[language]
+      ? baseContent
+      : recipe.translations[language];
   }
 
   hasTranslation(recipe: TranslatedRecipe, language: string): boolean {

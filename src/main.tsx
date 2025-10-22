@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       { path: 'recipes/:id', element: <RecipeDetailPage /> }
     ]
   }], {
-  basename: '/recipe-radar-with-ai/',
+  basename: '/recipe-radar-with-ai',
 });
 
 createRoot(document.getElementById('root')!).render(

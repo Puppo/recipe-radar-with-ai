@@ -164,5 +164,325 @@ export const recipes: Recipe[] = [
       'Serve chilled or at room temperature.'
     ],
     tags: ['Greek', 'Salad', 'Vegetarian', 'Healthy', 'Quick']
+  },
+  {
+    id: '6',
+    name: 'Beef Tacos',
+    description: 'Seasoned ground beef in warm tortillas with fresh toppings and zesty lime.',
+    imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&q=80',
+    prepTime: '10 minutes',
+    cookTime: '15 minutes',
+    servings: 4,
+    ingredients: [
+      '500g ground beef',
+      '1 tbsp chili powder',
+      '1 tsp ground cumin',
+      '1/2 tsp garlic powder',
+      '1/2 tsp onion powder',
+      '1/4 tsp cayenne pepper',
+      'Salt and pepper to taste',
+      '8 small flour or corn tortillas',
+      '1 cup shredded lettuce',
+      '1 cup diced tomatoes',
+      '1/2 cup shredded cheddar cheese',
+      '1/4 cup sour cream',
+      'Fresh cilantro',
+      '1 lime, cut into wedges'
+    ],
+    instructions: [
+      'Cook ground beef in a skillet over medium-high heat, breaking it apart, until browned.',
+      'Drain excess fat, then add chili powder, cumin, garlic powder, onion powder, cayenne, salt, and pepper.',
+      'Add 1/4 cup water and simmer for 5 minutes until the sauce thickens.',
+      'Warm tortillas in a dry skillet or microwave.',
+      'Fill each tortilla with seasoned beef and top with lettuce, tomatoes, cheese, sour cream, and cilantro.',
+      'Serve with lime wedges on the side.'
+    ],
+    tags: ['Mexican', 'Quick', 'Dinner', 'Beef']
+  },
+  {
+    id: '7',
+    name: 'Mushroom Risotto',
+    description: 'Creamy Italian rice dish with sautéed mushrooms, white wine, and parmesan.',
+    imageUrl: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&q=80',
+    prepTime: '10 minutes',
+    cookTime: '35 minutes',
+    servings: 4,
+    ingredients: [
+      '300g arborio rice',
+      '300g mixed mushrooms, sliced',
+      '1 litre vegetable or chicken stock, warm',
+      '1 small onion, finely diced',
+      '2 cloves garlic, minced',
+      '100ml dry white wine',
+      '50g parmesan cheese, grated',
+      '30g unsalted butter',
+      '2 tbsp olive oil',
+      'Fresh thyme leaves',
+      'Salt and pepper to taste'
+    ],
+    instructions: [
+      'Heat olive oil and half the butter in a large pan over medium heat. Sauté mushrooms until golden, then set aside.',
+      'In the same pan, cook onion until soft. Add garlic and cook for 1 minute.',
+      'Add arborio rice and stir for 2 minutes until lightly toasted.',
+      'Pour in white wine and stir until absorbed.',
+      'Add warm stock one ladle at a time, stirring frequently and waiting until each addition is absorbed before adding more.',
+      'Continue for about 18-20 minutes until rice is creamy and al dente.',
+      'Stir in the mushrooms, remaining butter, and parmesan. Season with salt, pepper, and thyme.',
+      'Serve immediately.'
+    ],
+    tags: ['Italian', 'Vegetarian', 'Dinner', 'Rice']
+  },
+  {
+    id: '8',
+    name: 'Thai Green Curry',
+    description: 'Fragrant coconut curry with vegetables and Thai basil in a spicy green sauce.',
+    imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&q=80',
+    prepTime: '15 minutes',
+    cookTime: '20 minutes',
+    servings: 4,
+    ingredients: [
+      '400ml coconut milk',
+      '3 tbsp green curry paste',
+      '300g chicken breast or tofu, sliced',
+      '1 red bell pepper, sliced',
+      '150g bamboo shoots',
+      '100g green beans, trimmed',
+      '2 tbsp fish sauce (or soy sauce for vegetarian)',
+      '1 tbsp palm sugar or brown sugar',
+      '4-5 kaffir lime leaves',
+      'Fresh Thai basil leaves',
+      '1 tbsp vegetable oil',
+      'Steamed jasmine rice, to serve'
+    ],
+    instructions: [
+      'Heat oil in a wok or large pan over medium-high heat.',
+      'Add green curry paste and fry for 1 minute until fragrant.',
+      'Pour in half the coconut milk and stir until it begins to bubble.',
+      'Add chicken or tofu and cook for 5 minutes.',
+      'Add the remaining coconut milk, bell pepper, bamboo shoots, green beans, and lime leaves.',
+      'Simmer for 10 minutes until vegetables are tender.',
+      'Season with fish sauce and sugar. Adjust to taste.',
+      'Stir in Thai basil leaves just before serving.',
+      'Serve over steamed jasmine rice.'
+    ],
+    tags: ['Thai', 'Curry', 'Dinner', 'Spicy']
+  },
+  {
+    id: '9',
+    name: 'Banana Pancakes',
+    description: 'Fluffy pancakes made with ripe bananas, perfect for a weekend breakfast.',
+    imageUrl: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&q=80',
+    prepTime: '10 minutes',
+    cookTime: '15 minutes',
+    servings: 2,
+    ingredients: [
+      '2 ripe bananas',
+      '2 large eggs',
+      '150g all-purpose flour',
+      '1 tsp baking powder',
+      '1/2 tsp cinnamon',
+      '1 tbsp sugar',
+      '120ml milk',
+      '1 tsp vanilla extract',
+      'Butter for cooking',
+      'Maple syrup, to serve',
+      'Fresh berries, to serve'
+    ],
+    instructions: [
+      'Mash the bananas in a large bowl until smooth.',
+      'Whisk in eggs, milk, and vanilla extract.',
+      'In a separate bowl, mix flour, baking powder, cinnamon, and sugar.',
+      'Combine wet and dry ingredients, stirring until just combined (a few lumps are okay).',
+      'Heat a non-stick pan over medium heat and add a small knob of butter.',
+      'Pour about 1/4 cup of batter per pancake and cook until bubbles form on the surface, about 2 minutes.',
+      'Flip and cook for another 1-2 minutes until golden brown.',
+      'Serve stacked with maple syrup and fresh berries.'
+    ],
+    tags: ['Breakfast', 'Sweet', 'Quick', 'Vegetarian']
+  },
+  {
+    id: '10',
+    name: 'Caesar Salad',
+    description: 'Crisp romaine lettuce tossed with creamy Caesar dressing, croutons, and parmesan.',
+    imageUrl: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&q=80',
+    prepTime: '15 minutes',
+    cookTime: '10 minutes',
+    servings: 4,
+    ingredients: [
+      '2 heads romaine lettuce, chopped',
+      '1 cup croutons',
+      '50g parmesan cheese, shaved',
+      '2 anchovy fillets, minced',
+      '1 clove garlic, minced',
+      '2 tbsp lemon juice',
+      '1 tsp Dijon mustard',
+      '1 tsp Worcestershire sauce',
+      '1 egg yolk',
+      '100ml extra virgin olive oil',
+      'Salt and freshly ground black pepper'
+    ],
+    instructions: [
+      'For the dressing, whisk together anchovy fillets, garlic, lemon juice, Dijon mustard, Worcestershire sauce, and egg yolk in a bowl.',
+      'Slowly drizzle in olive oil while whisking constantly to emulsify.',
+      'Season the dressing with salt and pepper to taste.',
+      'Place chopped romaine in a large bowl.',
+      'Pour dressing over the lettuce and toss to coat evenly.',
+      'Top with croutons and shaved parmesan.',
+      'Serve immediately.'
+    ],
+    tags: ['Salad', 'American', 'Lunch', 'Quick']
+  },
+  {
+    id: '11',
+    name: 'Margherita Pizza',
+    description: 'Classic Neapolitan pizza with fresh mozzarella, tomato sauce, and basil.',
+    imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&q=80',
+    prepTime: '20 minutes',
+    cookTime: '15 minutes',
+    servings: 2,
+    ingredients: [
+      '300g pizza dough',
+      '150ml San Marzano tomato sauce',
+      '200g fresh mozzarella, sliced',
+      'Fresh basil leaves',
+      '2 tbsp extra virgin olive oil',
+      '1 clove garlic, minced',
+      'Pinch of salt',
+      'Semolina flour for dusting'
+    ],
+    instructions: [
+      'Preheat oven to its highest setting (ideally 250°C/480°F) with a pizza stone or inverted baking sheet inside.',
+      'Stretch the pizza dough into a round shape on a floured surface.',
+      'Mix tomato sauce with garlic and a pinch of salt, then spread evenly over the dough.',
+      'Distribute mozzarella slices over the sauce.',
+      'Transfer pizza to the hot stone or baking sheet.',
+      'Bake for 10-15 minutes until the crust is golden and cheese is bubbly.',
+      'Remove from oven, top with fresh basil leaves and a drizzle of olive oil.',
+      'Slice and serve immediately.'
+    ],
+    tags: ['Italian', 'Pizza', 'Dinner', 'Vegetarian']
+  },
+  {
+    id: '12',
+    name: 'Miso Soup',
+    description: 'Traditional Japanese soup with tofu, wakame seaweed, and green onions.',
+    imageUrl: 'https://images.unsplash.com/photo-1607301405390-d831c242f59b?auto=format&fit=crop&q=80',
+    prepTime: '5 minutes',
+    cookTime: '10 minutes',
+    servings: 4,
+    ingredients: [
+      '4 cups dashi stock',
+      '3 tbsp white miso paste',
+      '150g silken tofu, cubed',
+      '2 tbsp dried wakame seaweed',
+      '2 green onions, thinly sliced',
+      '1 tsp soy sauce (optional)'
+    ],
+    instructions: [
+      'Soak dried wakame in water for 5 minutes, then drain.',
+      'Bring dashi stock to a gentle simmer in a pot (do not boil vigorously).',
+      'Add tofu cubes and wakame to the stock.',
+      'Place miso paste in a ladle, submerge it partially in the broth, and stir to dissolve. Do not boil after adding miso.',
+      'Add soy sauce if desired for extra depth.',
+      'Ladle into bowls and garnish with sliced green onions.',
+      'Serve immediately as a starter or alongside rice.'
+    ],
+    tags: ['Japanese', 'Soup', 'Healthy', 'Quick', 'Vegetarian']
+  },
+  {
+    id: '13',
+    name: 'Lemon Garlic Salmon',
+    description: 'Pan-seared salmon fillets with a bright lemon garlic butter sauce.',
+    imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80',
+    prepTime: '5 minutes',
+    cookTime: '15 minutes',
+    servings: 2,
+    ingredients: [
+      '2 salmon fillets (about 180g each)',
+      '2 tbsp unsalted butter',
+      '3 cloves garlic, minced',
+      '2 tbsp lemon juice',
+      '1 tsp lemon zest',
+      '1 tbsp olive oil',
+      'Fresh dill or parsley',
+      'Salt and pepper to taste'
+    ],
+    instructions: [
+      'Pat salmon fillets dry and season generously with salt and pepper.',
+      'Heat olive oil in a skillet over medium-high heat.',
+      'Place salmon skin-side up and sear for 4 minutes until a golden crust forms.',
+      'Flip and cook for another 3-4 minutes.',
+      'Reduce heat to low. Add butter and garlic to the pan, cooking until garlic is fragrant.',
+      'Add lemon juice and zest, spooning the sauce over the salmon.',
+      'Garnish with fresh dill or parsley and serve with your choice of sides.'
+    ],
+    tags: ['Seafood', 'Healthy', 'Quick', 'Dinner']
+  },
+  {
+    id: '14',
+    name: 'Falafel Wrap',
+    description: 'Crispy chickpea falafel in warm pita with tahini sauce and fresh vegetables.',
+    imageUrl: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&q=80',
+    prepTime: '20 minutes',
+    cookTime: '15 minutes',
+    servings: 4,
+    ingredients: [
+      '400g canned chickpeas, drained',
+      '1/2 onion, roughly chopped',
+      '3 cloves garlic',
+      '1/4 cup fresh parsley',
+      '1/4 cup fresh cilantro',
+      '1 tsp ground cumin',
+      '1 tsp ground coriander',
+      '3 tbsp all-purpose flour',
+      'Salt and pepper to taste',
+      'Vegetable oil for frying',
+      '4 pita breads',
+      '1 cup shredded lettuce',
+      '1 tomato, diced',
+      '1/2 cucumber, sliced',
+      '1/4 cup tahini sauce'
+    ],
+    instructions: [
+      'Blend chickpeas, onion, garlic, parsley, cilantro, cumin, and coriander in a food processor until a coarse mixture forms (do not over-blend).',
+      'Mix in flour, salt, and pepper. Refrigerate for 30 minutes if the mixture feels too wet.',
+      'Shape into small patties or balls.',
+      'Heat about 1cm of oil in a pan over medium-high heat. Fry falafel for 3-4 minutes per side until golden and crispy.',
+      'Drain on paper towels.',
+      'Warm pita breads and fill with falafel, lettuce, tomato, cucumber, and a drizzle of tahini sauce.',
+      'Serve immediately.'
+    ],
+    tags: ['Middle Eastern', 'Vegetarian', 'Lunch', 'Healthy']
+  },
+  {
+    id: '15',
+    name: 'Tiramisu',
+    description: 'Classic Italian no-bake dessert with espresso-soaked ladyfingers and mascarpone cream.',
+    imageUrl: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&q=80',
+    prepTime: '30 minutes',
+    cookTime: '0 minutes',
+    servings: 8,
+    ingredients: [
+      '6 egg yolks',
+      '150g sugar',
+      '500g mascarpone cheese',
+      '300ml strong espresso, cooled',
+      '2 tbsp coffee liqueur (optional)',
+      '300g ladyfinger biscuits (savoiardi)',
+      'Unsweetened cocoa powder for dusting',
+      '200ml heavy cream'
+    ],
+    instructions: [
+      'Whisk egg yolks and sugar together until thick and pale.',
+      'Add mascarpone and mix until smooth.',
+      'In a separate bowl, whip heavy cream to soft peaks, then fold into the mascarpone mixture.',
+      'Combine cooled espresso and coffee liqueur in a shallow dish.',
+      'Briefly dip each ladyfinger into the espresso mixture (do not soak) and arrange in a single layer in a 9x13 dish.',
+      'Spread half the mascarpone cream over the ladyfingers.',
+      'Repeat with another layer of dipped ladyfingers and remaining cream.',
+      'Cover and refrigerate for at least 4 hours, ideally overnight.',
+      'Dust generously with cocoa powder before serving.'
+    ],
+    tags: ['Italian', 'Dessert', 'No-Bake', 'Sweet']
   }
 ];

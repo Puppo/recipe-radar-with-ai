@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { RecipeTranslationContext, type RecipeTranslationContextValue } from '../contexts/RecipeTranslationContext';
 import translatorService from '../services/ai/translatorService';
 import type { Recipe, TranslatedRecipe } from '../types/recipe';
@@ -12,9 +12,14 @@ export function RecipeTranslationProvider({
   children,
   onError
 }: RecipeTranslationProviderProps) {
-  const [translatedRecipe, setTranslatedRecipe] = useState<TranslatedRecipe | null>(null);
+  const [translatedRecipe, _setTranslatedRecipe] = useState<TranslatedRecipe | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationError, setTranslationError] = useState<string | null>(null);
+
+  const setTranslatedRecipe = useCallback((recipe: TranslatedRecipe | null) => {
+    _setTranslatedRecipe(recipe);
+    setTranslationError(null);
+  }, [_setTranslatedRecipe, setTranslationError]);
 
   const translateRecipe = useCallback(async (recipe: Recipe, targetLanguage: string) => {
     if (!recipe) return;
@@ -43,7 +48,7 @@ export function RecipeTranslationProvider({
     } finally {
       setIsTranslating(false);
     }
-  }, [translatedRecipe, onError]);
+  }, [translatedRecipe, onError, setTranslatedRecipe]);
 
   const getDisplayContent = useCallback((language: string) => {
     if (!translatedRecipe) return null;
@@ -58,11 +63,7 @@ export function RecipeTranslationProvider({
   const clearTranslation = useCallback(() => {
     setTranslatedRecipe(null);
     setTranslationError(null);
-  }, []);
-
-  useEffect(() => {
-    setTranslationError(null);
-  }, [translatedRecipe]);
+  }, [setTranslatedRecipe, setTranslationError]);
 
   const value: RecipeTranslationContextValue = {
     translatedRecipe,

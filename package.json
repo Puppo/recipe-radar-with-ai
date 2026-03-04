@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mcp-b/global": "^2.0.11",
+    "@mcp-b/react-webmcp": "^2.0.11",
     "@tanstack/react-query": "^5.90.21",
     "dompurify": "^3.3.1",
     "marked": "^17.0.3",
@@ -17,7 +19,9 @@
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",
     "tailwind-merge": "^3.5.0",
-    "tailwind-variants": "^3.2.2"
+    "tailwind-variants": "^3.2.2",
+    "zod": "^4.3.6",
+    "zod-to-json-schema": "^3.25.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

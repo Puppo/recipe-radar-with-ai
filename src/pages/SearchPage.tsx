@@ -3,6 +3,7 @@ import { tv } from 'tailwind-variants';
 import { RecipeCard } from '../components/RecipeCard';
 import { useRecipeAIFilter } from '../hooks/useRecipeAIFilter';
 import { useAllRecipes } from '../hooks/useRecipes';
+import { useSearchWebMCP } from '../hooks/useSearchWebMCP';
 
 const searchPage = tv({
   slots: {
@@ -50,6 +51,8 @@ export function SearchPage() {
   const [searchParams] = useSearchParams();
   const filterParam = searchParams.get('filter') ?? '';
 
+  useSearchWebMCP();
+
   const { recipes: allRecipes } = useAllRecipes();
 
   const {
@@ -74,17 +77,27 @@ export function SearchPage() {
         </label>
 
         {isAIAvailable ? (
-          <>
+          <form
+            // Declarative WebMCP: exposes this form as an AI-callable tool in supporting browsers (Chrome 146+)
+            // @ts-expect-error -- WebMCP declarative attributes are not yet in React/TS typings
+            toolname="filter_recipes"
+            tooldescription="Filter recipes using a natural language query (e.g. 'quick vegetarian recipes', 'something with pasta')"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <div className={aiFilterInputWrapper()}>
               <input
                 type="text"
+                name="query"
                 className={aiFilterInput()}
                 style={{ viewTransitionName: 'ai-filter-input' }}
                 placeholder='e.g. "quick vegetarian recipes" or "something with pasta"'
                 autoFocus
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
+                // @ts-expect-error -- WebMCP declarative attribute (draft spec)
+                toolparamdescription="Natural language description of the recipes you are looking for"
               />
+              <button type="submit" className="sr-only" aria-hidden="true">Filter</button>
               {filterQuery && (
                 <button
                   type="button"
@@ -107,7 +120,7 @@ export function SearchPage() {
             {filterError && (
               <p className={aiFilterError()}>{filterError}</p>
             )}
-          </>
+          </form>
         ) : (
           <p className={aiFilterUnavailable()}>
             Chrome's built-in AI is not available in this browser. Enable it in chrome://flags to use natural language filtering.

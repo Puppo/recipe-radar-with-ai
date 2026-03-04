@@ -6,6 +6,7 @@ import { TranslationStatusNotification } from '../../components/TranslationStatu
 import { TranslationStatusPanel } from '../../components/TranslationStatusPanel';
 import { languages } from '../../constants/languages';
 import { useLanguageDetection } from '../../hooks/useLanguageDetection';
+import { useNutritionWebMCP } from '../../hooks/useNutritionWebMCP';
 import { usePromptApi } from '../../hooks/usePromptApi';
 import { useRecipeById } from '../../hooks/useRecipes';
 import { useRecipeTranslation } from '../../hooks/useRecipeTranslation';
@@ -47,6 +48,8 @@ function RecipeDetailPageContent({
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [hasDetectedLanguage, setHasDetectedLanguage] = useState(false);
   const [isInitializingLanguage, setIsInitializingLanguage] = useState(true);
+
+  useNutritionWebMCP();
 
   // Use Prompt API from context
   const {

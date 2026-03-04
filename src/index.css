@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* View Transition styles for HomePage → SearchPage */
+::view-transition-old(ai-filter-section),
+::view-transition-new(ai-filter-section) {
+  animation-duration: 0.3s;
+}
+
+::view-transition-old(ai-filter-input),
+::view-transition-new(ai-filter-input) {
+  animation-duration: 0.3s;
+}
+
 /* Custom styles for AI-generated HTML summaries */
 .summary-content {
   line-height: 1.5;

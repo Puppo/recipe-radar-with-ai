@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* View Transition styles for HomePage → SearchPage */
+/* View Transition styles for AI filter section */
 ::view-transition-old(ai-filter-section),
 ::view-transition-new(ai-filter-section) {
   animation-duration: 0.3s;

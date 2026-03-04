@@ -1,10 +1,17 @@
 import type { RecipePreview } from "../../types/recipe";
 
-const SYSTEM_PROMPT = `You are a recipe filter assistant. Your task is to filter a list of recipes based on the user's natural language criteria.
-Given a list of recipes and filter criteria, respond ONLY with a valid JSON array containing the IDs of matching recipes.
-Example: ["1", "3", "5"]
-If no recipes match, respond with: []
-Do not include any explanation, markdown formatting, or other text — only the JSON array.`;
+const SYSTEM_PROMPT = `You are a recipe filter assistant. You receive a JSON array of recipes (each with id, name, and description) and a user's natural language filter criteria. Your job is to return only the recipes that match the criteria.
+
+Matching rules:
+- Use semantic understanding: "quick meals" matches recipes described as fast, easy, or with short prep times.
+- Consider ingredients, cuisine type, dietary preferences, cooking method, and any detail in the name or description.
+- Be inclusive on partial matches — if a recipe is reasonably relevant, include it.
+- If the criteria are vague or match everything, return all IDs.
+
+Output rules:
+- Respond with a JSON array of matching recipe ID strings, e.g. ["1", "3", "5"]
+- If no recipes match, respond with: []
+- Do NOT include any explanation, markdown, or additional text — output ONLY the raw JSON array.`;
 
 export class RecipeFilterService {
   async checkAvailability(): Promise<Availability> {
@@ -37,6 +44,8 @@ export class RecipeFilterService {
 
       const message = `Recipes:\n${JSON.stringify(recipesData)}\n\nFilter criteria: "${query}"\n\nReturn ONLY a JSON array of matching recipe IDs.`;
       const response = await session.prompt(message);
+
+      console.debug("AI filter response:", response);
 
       const match = response.match(/\[[\s\S]*\]/);
       if (!match) return recipes.map((r) => r.id);

@@ -8,7 +8,7 @@ import './services/ai/translatorService';
 import { MainLayout } from './layouts/MainLayout';
 import { HomePage } from './pages/HomePage';
 import { RecipeDetailPage } from './pages/RecipeDetailPage';
-import { SearchPage } from './pages/SearchPage';
+import { SearchRedirect } from './pages/SearchRedirect';
 import { LanguageDetectionProvider } from './providers/LanguageDetectionProvider';
 import { QueryProvider } from './providers/QueryProvider';
 import { SummarizerProvider } from './providers/SummarizerProvider';
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'search', element: <SearchPage /> },
+      { path: 'search', element: <SearchRedirect /> },
       { path: 'recipes/:id', element: <RecipeDetailPage /> }
     ]
   }], {

@@ -8,6 +8,7 @@ import { languages } from '../../constants/languages';
 import { useLanguageDetection } from '../../hooks/useLanguageDetection';
 import { useNutritionWebMCP } from '../../hooks/useNutritionWebMCP';
 import { usePromptApi } from '../../hooks/usePromptApi';
+import { useRecipeInfoWebMCP } from '../../hooks/useRecipeInfoWebMCP';
 import { useRecipeById } from '../../hooks/useRecipes';
 import { useRecipeTranslation } from '../../hooks/useRecipeTranslation';
 import { useTranslationStatus } from '../../hooks/useTranslationStatus';
@@ -49,6 +50,7 @@ function RecipeDetailPageContent({
   const [hasDetectedLanguage, setHasDetectedLanguage] = useState(false);
   const [isInitializingLanguage, setIsInitializingLanguage] = useState(true);
 
+  useRecipeInfoWebMCP(recipe);
   useNutritionWebMCP();
 
   // Use Prompt API from context

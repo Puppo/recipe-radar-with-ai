@@ -1,5 +1,7 @@
+import z from "zod";
 import {
   nutritionDatabase,
+  NutritionPer100gSchema,
   type NutritionPer100g,
 } from "../data/nutritionData";
 import { recipes } from "../data/recipes";
@@ -20,20 +22,36 @@ const unitToGrams: Record<string, number> = {
   slices: 40,
 };
 
-export interface IngredientNutrition {
-  name: string;
-  grams: number;
-  nutrition: NutritionPer100g;
-  matched: boolean;
-}
+export const IngredientNutritionSchema = z.object({
+  name: z.string().describe('Original ingredient text (e.g. "400g spaghetti")'),
+  grams: z.number().describe("Estimated weight in grams for this ingredient"),
+  nutrition: NutritionPer100gSchema.describe(
+    "Estimated nutrition for the given quantity of this ingredient",
+  ),
+  matched: z
+    .boolean()
+    .describe(
+      "Whether this ingredient was successfully matched to a nutrition entry",
+    ),
+});
 
-export interface NutritionResult {
-  recipeName: string;
-  servings: number;
-  total: NutritionPer100g;
-  totalPerServing: NutritionPer100g;
-  ingredients: IngredientNutrition[];
-}
+export type IngredientNutrition = z.infer<typeof IngredientNutritionSchema>;
+
+export const NutritionResultSchema = z.object({
+  recipeName: z.string().describe("Name of the recipe"),
+  servings: z.number().describe("Number of servings the recipe makes"),
+  total: NutritionPer100gSchema.describe(
+    "Total nutrition for the entire recipe",
+  ),
+  totalPerServing: NutritionPer100gSchema.describe(
+    "Estimated nutrition per serving",
+  ),
+  ingredients: IngredientNutritionSchema.array().describe(
+    "Array of ingredient nutrition breakdowns",
+  ),
+});
+
+export type NutritionResult = z.infer<typeof NutritionResultSchema>;
 
 const ZERO_NUTRITION: NutritionPer100g = {
   calories: 0,

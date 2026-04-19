@@ -5,6 +5,7 @@ import {
   calculateNutritionByRecipeId,
   NutritionResultSchema,
 } from "../services/nutritionCalculator";
+import { toJsonSchema } from "../utils/webmcp";
 
 export function useNutritionWebMCP() {
   useWebMCP({
@@ -41,10 +42,12 @@ export function useNutritionWebMCP() {
         nutrition,
       };
     },
-    outputSchema: {
-      nutrition: NutritionResultSchema.describe(
-        "Nutrition information for the ingredients",
-      ),
-    },
+    outputSchema: toJsonSchema(
+      z.object({
+        nutrition: NutritionResultSchema.describe(
+          "Nutrition information for the ingredients",
+        ),
+      }),
+    ),
   });
 }

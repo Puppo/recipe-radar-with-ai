@@ -1,6 +1,7 @@
 import { useWebMCP } from "@mcp-b/react-webmcp";
 import z from "zod";
 import type { Recipe } from "../types/recipe";
+import { toJsonSchema } from "../utils/webmcp";
 
 export function useRecipeInfoWebMCP(recipe: Recipe) {
   useWebMCP({
@@ -20,16 +21,18 @@ export function useRecipeInfoWebMCP(recipe: Recipe) {
         tags: recipe.tags,
       };
     },
-    outputSchema: {
-      id: z.string(),
-      name: z.string(),
-      description: z.string(),
-      prepTime: z.string(),
-      cookTime: z.string(),
-      servings: z.number(),
-      ingredients: z.array(z.string()),
-      instructions: z.array(z.string()),
-      tags: z.array(z.string()),
-    },
+    outputSchema: toJsonSchema(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        description: z.string(),
+        prepTime: z.string(),
+        cookTime: z.string(),
+        servings: z.number(),
+        ingredients: z.array(z.string()),
+        instructions: z.array(z.string()),
+        tags: z.array(z.string()),
+      }),
+    ),
   });
 }

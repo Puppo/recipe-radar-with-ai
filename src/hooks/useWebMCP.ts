@@ -19,6 +19,18 @@ type InferInputArgs<T> = T extends z.ZodTypeAny
   ? z.infer<T>
   : Record<string, unknown>;
 type InferOutputResult<T> = T extends z.ZodTypeAny ? z.infer<T> : unknown;
+type OptionalJsonSchema<TSchema extends z.ZodTypeAny | undefined> =
+  TSchema extends z.ZodTypeAny ? JsonSchemaObject<TSchema> : undefined;
+
+function toOptionalJsonSchema<TSchema extends z.ZodTypeAny | undefined>(
+  schema: TSchema,
+): OptionalJsonSchema<TSchema> {
+  if (!schema) {
+    return undefined as OptionalJsonSchema<TSchema>;
+  }
+
+  return toJsonSchema(schema) as OptionalJsonSchema<TSchema>;
+}
 
 export interface WebMCPTool<
   TInputSchema extends z.ZodTypeAny | undefined = undefined,
@@ -37,11 +49,14 @@ export interface WebMCPTool<
     | Promise<InferOutputResult<TOutputSchema>>;
 }
 
-interface NativeTool {
+interface NativeTool<
+  TInputSchema extends z.ZodTypeAny | undefined = undefined,
+  TOutputSchema extends z.ZodTypeAny | undefined = undefined,
+> {
   name: string;
   description: string;
-  inputSchema?: JsonSchemaObject;
-  outputSchema?: JsonSchemaObject;
+  inputSchema?: OptionalJsonSchema<TInputSchema>;
+  outputSchema?: OptionalJsonSchema<TOutputSchema>;
   annotations?: ToolAnnotations;
   execute: (
     args: Record<string, unknown>,
@@ -49,8 +64,11 @@ interface NativeTool {
   ) => unknown;
 }
 
-type RegisterToolWithSignal = (
-  tool: NativeTool,
+type RegisterToolWithSignal = <
+  TInputSchema extends z.ZodTypeAny | undefined = undefined,
+  TOutputSchema extends z.ZodTypeAny | undefined = undefined,
+>(
+  tool: NativeTool<TInputSchema, TOutputSchema>,
   options?: { signal: AbortSignal },
 ) => void;
 
@@ -75,17 +93,16 @@ export function useWebMCP<
       modelContext,
     ) as RegisterToolWithSignal;
 
-    const nativeTool: NativeTool = {
+    const nativeTool: NativeTool<TInputSchema, TOutputSchema> = {
       name: tool.name,
       description: tool.description,
-      inputSchema: tool.inputSchema
-        ? toJsonSchema(tool.inputSchema)
-        : undefined,
-      outputSchema: tool.outputSchema
-        ? toJsonSchema(tool.outputSchema)
-        : undefined,
+      inputSchema: toOptionalJsonSchema(tool.inputSchema),
+      outputSchema: toOptionalJsonSchema(tool.outputSchema),
       annotations: tool.annotations,
-      execute: tool.execute as NativeTool["execute"],
+      execute: tool.execute as NativeTool<
+        TInputSchema,
+        TOutputSchema
+      >["execute"],
     };
 
     try {

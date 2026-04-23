@@ -64,13 +64,22 @@ interface NativeTool<
   ) => unknown;
 }
 
-type RegisterToolWithSignal = <
-  TInputSchema extends z.ZodTypeAny | undefined = undefined,
-  TOutputSchema extends z.ZodTypeAny | undefined = undefined,
->(
-  tool: NativeTool<TInputSchema, TOutputSchema>,
-  options?: { signal: AbortSignal },
-) => void;
+interface ModelContext {
+  registerTool: <
+    TInputSchema extends z.ZodTypeAny | undefined = undefined,
+    TOutputSchema extends z.ZodTypeAny | undefined = undefined,
+  >(
+    tool: NativeTool<TInputSchema, TOutputSchema>,
+    options?: { signal: AbortSignal },
+  ) => void;
+  unregisterTool?: (name: string) => void;
+}
+
+declare global {
+  interface Navigator {
+    modelContext?: ModelContext;
+  }
+}
 
 export function useWebMCP<
   TInputSchema extends z.ZodTypeAny | undefined = undefined,
@@ -89,9 +98,6 @@ export function useWebMCP<
     }
 
     const controller = new AbortController();
-    const registerTool = modelContext.registerTool.bind(
-      modelContext,
-    ) as RegisterToolWithSignal;
 
     const nativeTool: NativeTool<TInputSchema, TOutputSchema> = {
       name: tool.name,
@@ -106,7 +112,7 @@ export function useWebMCP<
     };
 
     try {
-      registerTool(nativeTool, { signal: controller.signal });
+      modelContext.registerTool(nativeTool, { signal: controller.signal });
       console.log(`[useWebMCP] Registered tool "${tool.name}" successfully.`);
     } catch (error) {
       console.error(

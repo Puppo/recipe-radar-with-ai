@@ -1,4 +1,5 @@
 import type { RecipePreview } from "../../types/recipe";
+import type { PromptApiCreateOptions } from "../../types/ai";
 
 const SYSTEM_PROMPT = `You are a recipe filter assistant. You receive a JSON array of recipes (each with id, name, and description) and a user's natural language filter criteria. Your job is to return only the recipes that match the criteria.
 
@@ -31,9 +32,14 @@ export class RecipeFilterService {
       throw new Error("AI filtering is not available in this browser");
     }
 
-    const session = await LanguageModel.create({
+    const createOptions: PromptApiCreateOptions = {
       initialPrompts: [{ role: "system", content: SYSTEM_PROMPT }],
-    });
+      samplingMode: "most-predictable",
+    };
+
+    const session = await LanguageModel.create(
+      createOptions as LanguageModelCreateOptions,
+    );
 
     try {
       const recipesData = recipes.map((r) => ({

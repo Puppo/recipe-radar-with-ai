@@ -283,8 +283,7 @@ Instructions: ${recipe.instructions.join(' ')}`
   return (
     <PromptApiProvider
       systemPrompt={systemPrompt}
-      temperature={0.8}
-      topK={40}
+      samplingMode="balanced"
       autoInitialize={true}
     >
       <RecipeTranslationProvider>

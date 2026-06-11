@@ -1,3 +1,5 @@
+import type { PromptApiCreateOptions } from "../../types/ai";
+
 export class PromptApiService {
   private _session: LanguageModel | null = null;
   private _initializationPromise: Promise<LanguageModel> | null = null;
@@ -10,7 +12,7 @@ export class PromptApiService {
     }
   }
 
-  async createSession(options: LanguageModelCreateOptions = {}): Promise<LanguageModel> {
+  async createSession(options: PromptApiCreateOptions = {}): Promise<LanguageModel> {
     // Return existing promise or session
     if (this._initializationPromise) return this._initializationPromise;
     if (this._session) return this._session;
@@ -23,10 +25,9 @@ export class PromptApiService {
           throw new Error('Prompt API is not available in this browser');
         }
 
-        const sessionOptions: LanguageModelCreateOptions = {
+        const sessionOptions: PromptApiCreateOptions = {
           initialPrompts: options.initialPrompts ?? [],
-          topK: options.topK ?? 40,
-          temperature: options.temperature ?? 0.7,
+          samplingMode: options.samplingMode ?? "balanced",
         };
 
         // Add monitor for download progress if needed
@@ -48,14 +49,14 @@ export class PromptApiService {
     return this._initializationPromise;
   }
 
-  private async ensureSession(options?: LanguageModelCreateOptions): Promise<LanguageModel> {
+  private async ensureSession(options?: PromptApiCreateOptions): Promise<LanguageModel> {
     if (!this._session) {
       await this.createSession(options);
     }
     return this._session!;
   }
 
-  async prompt(message: string, options?: LanguageModelCreateOptions): Promise<string> {
+  async prompt(message: string, options?: PromptApiCreateOptions): Promise<string> {
     const session = await this.ensureSession(options);
     return session.prompt(message);
   }
@@ -63,7 +64,7 @@ export class PromptApiService {
   async promptStreaming(
     message: string,
     onChunk: (chunk: string) => void,
-    options?: LanguageModelCreateOptions
+    options?: PromptApiCreateOptions
   ): Promise<void> {
     const session = await this.ensureSession(options);
     const stream = session.promptStreaming(message);

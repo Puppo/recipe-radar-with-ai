@@ -3,12 +3,12 @@ import type { ChatMessage } from '../components/Chat';
 import { PromptApiContext, type PromptApiContextValue } from '../contexts/PromptApiContext';
 import { useEffectOnce } from '../hooks/useEffectOnce';
 import { PromptApiService } from '../services/ai/promptApiService';
+import type { AILanguageModelSamplingMode } from '../types/ai';
 
 interface PromptApiProviderProps {
   readonly children: ReactNode;
   readonly systemPrompt?: string;
-  readonly temperature?: number;
-  readonly topK?: number;
+  readonly samplingMode?: AILanguageModelSamplingMode;
   readonly autoInitialize?: boolean;
   readonly onError?: (error: Error) => void;
   readonly onMessageReceived?: (message: ChatMessage) => void;
@@ -17,8 +17,7 @@ interface PromptApiProviderProps {
 export function PromptApiProvider({
   children,
   systemPrompt,
-  temperature,
-  topK,
+  samplingMode,
   autoInitialize = true,
   onError,
   onMessageReceived
@@ -35,13 +34,12 @@ export function PromptApiProvider({
   const hasAutoInitialized = useRef(false);
 
   const sessionOptions: LanguageModelCreateOptions = useMemo(() => ({
-    temperature,
-    topK,
+    samplingMode,
     initialPrompts: systemPrompt ? [{
       role: 'system',
       content: systemPrompt
     }] : []
-  }), [systemPrompt, temperature, topK]);
+  }), [systemPrompt, samplingMode]);
 
   // Check availability on mount
   useEffect(() => {

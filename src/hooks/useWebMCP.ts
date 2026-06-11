@@ -79,6 +79,9 @@ declare global {
   interface Navigator {
     modelContext?: ModelContext;
   }
+  interface Document {
+    modelContext?: ModelContext;
+  }
 }
 
 export function useWebMCP<
@@ -89,10 +92,13 @@ export function useWebMCP<
   deps: DependencyList = [],
 ): void {
   useEffect(() => {
-    const modelContext = navigator.modelContext;
+    // Prefer `document.modelContext` (WebML CG, Chrome 150+) and fall back
+    // to the deprecated `navigator.modelContext` until the old getter is
+    // removed. See https://github.com/webmachinelearning/webmcp/issues/173
+    const modelContext = document.modelContext ?? navigator.modelContext;
     if (!modelContext) {
       console.warn(
-        `[useWebMCP] navigator.modelContext is unavailable; tool "${tool.name}" was not registered.`,
+        `[useWebMCP] modelContext is unavailable on both Document and Navigator; tool "${tool.name}" was not registered.`,
       );
       return;
     }

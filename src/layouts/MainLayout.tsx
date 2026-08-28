@@ -1,6 +1,10 @@
 import { Link, Outlet } from 'react-router-dom';
+import { useNavigationWebMCP } from '../hooks/useNavigationWebMCP';
+import { useSkillWebMCP } from '../hooks/useSkillWebMCP';
 
 export function MainLayout() {
+  useNavigationWebMCP();
+  useSkillWebMCP();
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <header className="bg-white shadow">

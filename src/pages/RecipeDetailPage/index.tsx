@@ -9,6 +9,7 @@ import { useLanguageDetection } from '../../hooks/useLanguageDetection';
 import { useNutritionWebMCP } from '../../hooks/useNutritionWebMCP';
 import { usePromptApi } from '../../hooks/usePromptApi';
 import { useRecipeInfoWebMCP } from '../../hooks/useRecipeInfoWebMCP';
+import { useRecipeNavWebMCP } from '../../hooks/useRecipeNavWebMCP';
 import { useRecipeById } from '../../hooks/useRecipes';
 import { useRecipeTranslation } from '../../hooks/useRecipeTranslation';
 import { useTranslationStatus } from '../../hooks/useTranslationStatus';
@@ -52,6 +53,7 @@ function RecipeDetailPageContent({
 
   useRecipeInfoWebMCP(recipe);
   useNutritionWebMCP();
+  useRecipeNavWebMCP();
 
   // Use Prompt API from context
   const {

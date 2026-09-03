@@ -59,13 +59,13 @@ export function useNavigationWebMCP(): void {
     {
       name: "navigate_to_search",
       description:
-        "Navigate to /search?filter=<query>. The search page redirects to home and applies the AI filter from the query parameter.",
+        "Navigate to /search?filter=<query>. The search page redirects to home and applies AI-enhanced search when available, with keyword search as a fallback.",
       inputSchema: z.object({
         filter: z
           .string()
           .optional()
           .describe(
-            "Optional natural language filter that will be applied on the home page",
+            "Optional recipe search query that will be applied on the home page",
           ),
       }),
       annotations: NAV_ANNOTATIONS,

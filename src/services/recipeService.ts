@@ -3,28 +3,34 @@ import type { Recipe, RecipePreview } from '../types/recipe';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+const toPreview = ({ id, name, description, imageUrl }: Recipe): RecipePreview => ({
+  id,
+  name,
+  description,
+  imageUrl,
+});
+
+export function findRecipesByContent(query: string): RecipePreview[] {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return [];
+  }
+
+  return recipes
+    .filter((recipe) =>
+      recipe.name.toLowerCase().includes(normalizedQuery) ||
+      recipe.description.toLowerCase().includes(normalizedQuery) ||
+      recipe.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery)),
+    )
+    .map(toPreview);
+}
+
 export const recipeService = {
   async searchRecipes(query: string): Promise<RecipePreview[]> {
     await delay(300);
-    
-    if (!query.trim()) {
-      return [];
-    }
-    
-    const lowerQuery = query.toLowerCase();
-    
-    const filteredRecipes = recipes.filter((recipe) => 
-      recipe.name.toLowerCase().includes(lowerQuery) ||
-      recipe.description.toLowerCase().includes(lowerQuery) ||
-      recipe.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
-    );
-      
-    return filteredRecipes.map(({ id, name, description, imageUrl }): RecipePreview => ({
-      id,
-      name,
-      description,
-      imageUrl,
-    }));
+
+    return findRecipesByContent(query);
   },
   
   async getRecipeById(id: string): Promise<Recipe> {
@@ -41,12 +47,7 @@ export const recipeService = {
   
   async getAllRecipes(): Promise<RecipePreview[]> {
     await delay(300);
-    
-    return recipes.map(({ id, name, description, imageUrl }): RecipePreview => ({
-      id,
-      name,
-      description,
-      imageUrl,
-    }));
+
+    return recipes.map(toPreview);
   }
 };

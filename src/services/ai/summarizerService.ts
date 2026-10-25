@@ -63,8 +63,14 @@ class SummarizerService {
       throw new Error('Summarizer not initialized');
     }
 
-    const summary = await this.summarizer.summarize(text);
-    return this.formatSummaryAsHTML(summary);
+    const startTime = performance.now();
+    try {
+      const summary = await this.summarizer.summarize(text);
+      return this.formatSummaryAsHTML(summary);
+    } finally {
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[Summarizer] summarize completed in ${durationMs}ms`);
+    }
   }
 
   private formatRecipeForSummarization(recipe: Recipe): string {

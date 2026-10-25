@@ -57,7 +57,10 @@ export class LanguageDetectionService {
       }
 
       const textToDetect = `${recipe.name} ${recipe.description} ${recipe.ingredients.slice(0, 3).join(' ')}`;
+      const startTime = performance.now();
       const detections = await this.detector.detect(textToDetect);
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[LanguageDetector] detect completed in ${durationMs}ms`);
 
       // Find first detection with confidence > 0.5
       const bestDetection = detections.find(d => (d.confidence ?? 0) > 0.5 && d.detectedLanguage);

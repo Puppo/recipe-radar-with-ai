@@ -37,9 +37,15 @@ class TranslatorService {
       throw new Error(`Translator not available for language: ${targetLanguage}`);
     }
 
-    const translatedText = await translator.translate(text);
-    this.translationCache.set(cacheKey, translatedText);
-    return translatedText;
+    const startTime = performance.now();
+    try {
+      const translatedText = await translator.translate(text);
+      this.translationCache.set(cacheKey, translatedText);
+      return translatedText;
+    } finally {
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[Translator] translateText (${targetLanguage}) completed in ${durationMs}ms`);
+    }
   }
 
   async translateArray(texts: string[], targetLanguage: string): Promise<string[]> {
@@ -50,31 +56,37 @@ class TranslatorService {
   async translateRecipe(recipe: Recipe, targetLanguage: string): Promise<TranslatedRecipe> {
     if (targetLanguage === 'en') return recipe;
 
-    const [name, description, ingredients, instructions, tags, cookTime, prepTime] = await Promise.all([
-      this.translateText(recipe.name, targetLanguage),
-      this.translateText(recipe.description, targetLanguage),
-      this.translateArray(recipe.ingredients, targetLanguage),
-      this.translateArray(recipe.instructions, targetLanguage),
-      this.translateArray(recipe.tags, targetLanguage),
-      this.translateText(recipe.cookTime, targetLanguage),
-      this.translateText(recipe.prepTime, targetLanguage),
-    ]);
+    const startTime = performance.now();
+    try {
+      const [name, description, ingredients, instructions, tags, cookTime, prepTime] = await Promise.all([
+        this.translateText(recipe.name, targetLanguage),
+        this.translateText(recipe.description, targetLanguage),
+        this.translateArray(recipe.ingredients, targetLanguage),
+        this.translateArray(recipe.instructions, targetLanguage),
+        this.translateArray(recipe.tags, targetLanguage),
+        this.translateText(recipe.cookTime, targetLanguage),
+        this.translateText(recipe.prepTime, targetLanguage),
+      ]);
 
-    return {
-      ...recipe,
-      translations: {
-        ...(recipe as TranslatedRecipe).translations,
-        [targetLanguage]: {
-          name,
-          description,
-          ingredients,
-          instructions,
-          tags,
-          cookTime,
-          prepTime,
+      return {
+        ...recipe,
+        translations: {
+          ...(recipe as TranslatedRecipe).translations,
+          [targetLanguage]: {
+            name,
+            description,
+            ingredients,
+            instructions,
+            tags,
+            cookTime,
+            prepTime,
+          }
         }
-      }
-    };
+      };
+    } finally {
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[Translator] translateRecipe (${targetLanguage}) completed in ${durationMs}ms`);
+    }
   }
 
   getTranslatedContent(recipe: TranslatedRecipe, language: string): Omit<Recipe, 'id' | 'imageUrl' | 'servings'> {

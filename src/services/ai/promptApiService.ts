@@ -58,7 +58,13 @@ export class PromptApiService {
 
   async prompt(message: string, options?: PromptApiCreateOptions): Promise<string> {
     const session = await this.ensureSession(options);
-    return session.prompt(message);
+    const startTime = performance.now();
+    try {
+      return await session.prompt(message);
+    } finally {
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[PromptAPI] prompt completed in ${durationMs}ms`);
+    }
   }
 
   async promptStreaming(
@@ -67,6 +73,7 @@ export class PromptApiService {
     options?: PromptApiCreateOptions
   ): Promise<void> {
     const session = await this.ensureSession(options);
+    const startTime = performance.now();
     const stream = session.promptStreaming(message);
     const reader = stream.getReader();
     
@@ -78,6 +85,8 @@ export class PromptApiService {
       }
     } finally {
       reader.releaseLock();
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[PromptAPI] promptStreaming completed in ${durationMs}ms`);
     }
   }
 

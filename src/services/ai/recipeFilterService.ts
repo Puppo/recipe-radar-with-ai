@@ -37,6 +37,7 @@ export class RecipeFilterService {
       samplingMode: "most-predictable",
     };
 
+    const startTime = performance.now();
     const session = await LanguageModel.create(
       createOptions as LanguageModelCreateOptions,
     );
@@ -60,6 +61,8 @@ export class RecipeFilterService {
       return Array.isArray(ids) ? ids.map(String) : recipes.map((r) => r.id);
     } finally {
       session.destroy();
+      const durationMs = (performance.now() - startTime).toFixed(2);
+      console.log(`[RecipeFilter] filterRecipes completed in ${durationMs}ms`);
     }
   }
 }
